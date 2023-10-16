@@ -3,7 +3,11 @@
 # Script que unifica las solicitudes a bases de datos.
 #
 # Banderas:
-# -a: checar usuario:password -> -a "usuario:password"
+# -c: checar usuario:password -> -c "usuario:password"
+
+function addElement {
+    
+}
 
 function checarUsuarioPassword {
     # Regresa usuario:nivel si es correcta la autenticación.
@@ -29,17 +33,26 @@ function checarUsuarioPassword {
     passwordUsuarioEnBD="$(echo "$usuarioEnBD" | awk -F: '{print $3}')"
     nivelUsuarioEnBD="$(echo "$usuarioEnBD" | awk -F: '{print $4}')"
 
-    if (("$passwordPorChecar" == "$passwordUsuarioEnBD")); then
+
+    if  [ "$passwordPorChecar" = "$passwordUsuarioEnBD" ]; then
         printf "%s:%d" "$usuarioPorChecar" "$nivelUsuarioEnBD"
     fi
-
 }
 
-while getopts a: o; do
+
+
+
+while getopts c: o; do
     case "$o" in
     a)
-        aFlag=true
-        aFlagArg="$OPTARG"
+
+        ;;
+    c)
+        # Checar usuario PassWord
+        cFlag=true
+        cFlagArg="$OPTARG"
+        #usuario:contraseñas
+        #regresa usuario:nivel
         ;;
     [?])
         print >&2 "Error Usage: $0 [-s] [-d seplist] file ..."
@@ -49,6 +62,6 @@ while getopts a: o; do
 done
 shift $OPTIND-1
 
-if [[ $aFlag ]]; then
-    checarUsuarioPassword "$aFlagArg"
+if [[ $cFlag ]]; then
+    checarUsuarioPassword "$cFlagArg"
 fi
