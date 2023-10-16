@@ -1,6 +1,5 @@
 #!/bin/ksh
 
-# Inicialización de variables
 
 # Función para mostrar las opciones del menu principal
 mostrarMenu(){
@@ -8,33 +7,42 @@ mostrarMenu(){
 	echo 1. Detalles de articulos
 	echo 2. Detalles de clientes
 	echo 3. Detalles de insumos
-	echo 4. Salir 
+	echo 4. Ventas
+	echo 5. Ventas de producto 
+	echo 6. Salir
         echo -n "Selecciona una opción: "
         read opcion	
 }
 
 
 # Menu principal
-
-#integer opcion=0
-integer maximaOpcion=4
 while true; do 
 	mostrarMenu
-        #read opcion
 
 	case $opcion in 
 		1)
-	            source ./Detalles_Articulos.ksh
+	            source ./Scripts/Articulos.ksh
                     ;;
 	        2)
-		    source ./Detalles_Clientes.ksh
+		    source ./Scripts/Clientes.ksh
 		    ;;
 		3)
-		    source ./Detalles_Insumos.ksh
+		    source ./Scripts/Insumos.ksh
 		    ;;
+                4)
+	            source ./Scripts/Ventas.ksh
+		    ;;
+	        5) 
+	            source ./Scripts/Ventas_Productos.ksh
+		    ;;
+		6)  
+		    clear
+		    exit
+		    ;; 
 	        *) 
-		    echo saliendo
-		    exit 
+		    tput setaf 1
+		    print "\nIngresa una opción valida\n"
+		    tput sgr0
 		    ;;
 
 	esac
