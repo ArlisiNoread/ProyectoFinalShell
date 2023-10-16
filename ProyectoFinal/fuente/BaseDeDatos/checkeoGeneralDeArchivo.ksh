@@ -10,12 +10,10 @@ fi
 
 nombreArchivo="$1"
 
-if [[ -e "$nombreArchivo" ]]; then
-    print "Archivo $nombreArchivo existe"
-else
+if [[ ! -e "$nombreArchivo" ]]; then
     print "Archivo $nombreArchivo no fue encontrado. Creando archivo nuevo."
     touch "$nombreArchivo"
-    return 0
+    return 0    
 fi
 
 if [[ ! -f "$nombreArchivo" ]]; then
