@@ -13,9 +13,35 @@
 readonly nombreArchivo="Productos.txt"
 
 function agregar {
-	
+	#to do
+	print ""
 }
 
+function checkProductoLine {
+
+	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+		#Formato id:nombre:costo:cantidadEnAlmacen
+		id="$(echo "$1" | awk -F: '{print $1}')"
+		cantidadEnAlmacen="$(echo "$1" | awk -F: '{print $4}')"
+	elif [[ "$1" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+		#Formato nombre:costo:cantidadEnAlmacen
+		id=0
+		cantidadEnAlmacen="$(echo "$1" | awk -F: '{print $3}')"
+	else
+		print "Un producto debe ser del tipo id?:nombre:costo:cantidadEnAlmacen" >&2
+		return 1
+	fi
+
+	if [[ ! "$id" =~ ^\d+$ ]]; then
+		print "El id debe ser un número natural." >&2
+		return 1
+	fi
+
+	if [[ ! "$cantidadEnAlmacen" =~ ^\d+$ ]]; then
+		print "La cantidad en almacén debe ser un número natural." >&2
+		return 1
+	fi
+}
 
 function checkFile {
 	./checkeoGeneralDeArchivo.ksh "$nombreArchivo"
@@ -26,8 +52,7 @@ function checkFile {
 
 	# Todas las lineas de la base de datos deben tener este patrón
 	# id:nombre:costo:cantidadEnAlmacén
-	# honestamente luego le creo uno de awk que verifique los números....
-	comprobadorDeLineas="$(sed -n '/^[^:]*:[^:]*:[^:]*:[^:]*$/!p' $nombreArchivo)"
+	# comprobadorDeLineas="$(sed -n '/^[^:]*:[^:]*:[^:]*:[^:]*$/!p' $nombreArchivo)"
 
 	if [[ -n "$comprobadorDeLineas" ]]; then
 		print "Archivo $nombreArchivo corrupto."
@@ -35,13 +60,19 @@ function checkFile {
 		exit 1
 	fi
 
+	cnt=0
+	while read line; do
+		((cnt++))
+		checkProductoLine
+	done <"$nombreArchivo"
+
 }
 
-while getopts a:g:u:r:c o; do
+while getopts a:g:u:r:cn: o; do
 	case "$o" in
 	a)
 		aFlag=true
-		valorNuevo="$OPTARG"
+		aFlagArg="$OPTARG"
 		;;
 	g)
 		print "get"
@@ -56,6 +87,10 @@ while getopts a:g:u:r:c o; do
 	c)
 		cFlag=true
 		;;
+	n)
+		nFlag=true
+		nFlagArg="$OPTARG"
+		;;
 	[?])
 		print >&2 "Error Usage: $0 [-s] [-d seplist] file ..."
 		exit 1
@@ -68,5 +103,8 @@ if [[ $cFlag ]]; then
 	checkFile
 fi
 if [[ $aFlag ]]; then
-
+	print "a"
+fi
+if [[ $nFlag ]]; then
+	checkProductoLine "$nFlagArg"
 fi
