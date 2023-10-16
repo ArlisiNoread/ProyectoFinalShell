@@ -6,7 +6,25 @@
 # -c: checar usuario:password -> -c "usuario:password"
 
 function addElement {
-    
+    addQuery="$1"
+    if [[ ! "$addQuery" =~ ^[^:]+:.*$ ]]; then
+        print "Query de agregado debe tener estructura basedatos:[objetoPorAgregar]"
+        return 1
+    fi
+    database="$(echo "$addQuery" | sed 's/:.*$//')"
+    objeto="$(echo "$addQuery" | sed 's/^[^:]*://g')"
+
+    case "$database" in
+    usuarios)
+        respuesta="$(./crudUsuarios.ksh -a "$objeto")"
+        if (($? != 0)); then
+            print "$respuesta"
+            exit 1
+        fi
+
+        ;;
+    [?]) ;;
+    esac
 }
 
 function checarUsuarioPassword {
@@ -33,18 +51,17 @@ function checarUsuarioPassword {
     passwordUsuarioEnBD="$(echo "$usuarioEnBD" | awk -F: '{print $3}')"
     nivelUsuarioEnBD="$(echo "$usuarioEnBD" | awk -F: '{print $4}')"
 
-
-    if  [ "$passwordPorChecar" = "$passwordUsuarioEnBD" ]; then
+    if [ "$passwordPorChecar" = "$passwordUsuarioEnBD" ]; then
         printf "%s:%d" "$usuarioPorChecar" "$nivelUsuarioEnBD"
     fi
 }
 
-
-
-
-while getopts c: o; do
+while getopts a:c: o; do
     case "$o" in
     a)
+        # Agregar
+        aFlag=true
+        aFlagArg="$OPTARG"
 
         ;;
     c)
@@ -64,4 +81,7 @@ shift $OPTIND-1
 
 if [[ $cFlag ]]; then
     checarUsuarioPassword "$cFlagArg"
+fi
+if [[ $aFlag ]]; then
+    addElement "$aFlagArg"
 fi

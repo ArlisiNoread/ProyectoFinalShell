@@ -17,14 +17,14 @@ function agregar {
 
 	if [[ ! "$usuarioObject" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
 		print "El Usuario debe ser del tipo usuario:password:nivel \n"
-		return 1
+		exit 1
 	fi
 
 	respuestaAnalisis=$(checkUsuarioLine "$usuarioObject")
 
 	if (($? != 0)); then
 		print "$respuestaAnalisis"
-		return 1
+		exit 1
 	fi
 
 	#Checkeo de usuarios únicos.
@@ -36,7 +36,7 @@ function agregar {
 			END{print cnt}')"
 	if ((userCnt > 0)); then
 		print "Usuario $usuario ya existe en base de datos de usuarios."
-		return 1
+		exit 1
 	fi
 
 	if [[ ! -s "$nombreArchivo" ]]; then
@@ -45,7 +45,7 @@ function agregar {
 		idMayor="$(sed '/^$/d' "$nombreArchivo" | tail -n 1 | awk -F: '{print $1}')"
 		((idMayor++))
 		print "$idMayor"
-		printf "%d:%s\n" "$idMayor" "$usuarioObject" >>"$nombreArchivo"
+		printf "\n%d:%s\n" "$idMayor" "$usuarioObject" >>"$nombreArchivo"
 		sed -i '/^$/d' "$nombreArchivo"
 	fi
 
@@ -69,17 +69,17 @@ function checkUsuarioLine {
 		nivel="$(echo "$1" | awk -F: '{print $3}')"
 	else
 		print "Un usuario debe ser del tipo id?:usuario:password:nivel"
-		return 1
+		exit 1
 	fi
 
 	if [[ ! "$id" =~ ^\d+$ ]]; then
 		print "El id debe ser un número natural."
-		return 1
+		exit 1
 	fi
 
 	if [[ ! "$nivel" =~ ^\d+$ ]]; then
 		print "El nivel debe ser un número natural."
-		return 1
+		exit 1
 	fi
 }
 

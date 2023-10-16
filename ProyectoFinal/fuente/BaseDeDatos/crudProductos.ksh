@@ -33,10 +33,9 @@ function agregar {
 		idMayor="$(sed '/^$/d' "$nombreArchivo" | tail -n 1 | awk -F: '{print $1}')"
 		((idMayor++))
 		print "$idMayor"
-		printf "%d:%s\n" "$idMayor" "$producto" >> "$nombreArchivo"
+		printf "\n%d:%s\n" "$idMayor" "$producto" >> "$nombreArchivo"
 		sed -i '/^$/d' "$nombreArchivo"
 	fi
-
 }
 
 function checkProductoLine {
