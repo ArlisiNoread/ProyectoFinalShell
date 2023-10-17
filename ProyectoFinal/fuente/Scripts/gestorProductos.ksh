@@ -7,6 +7,7 @@
 #	de la tabla "Productos" de la base de datos.
 
 # Menu principal 
+
 while true; do
 	printf "\n\n\t\t===================  MU & ME ====================\n"
 	printf "\n\t\t                 Gestor de productos  		 \n"
@@ -38,12 +39,13 @@ while true; do
 				read cantidad_producto
 				
 				#source ../BaseDeDatos/databaseManager.ksh -a productos:"$nombre_producto":"$precio_producto":"$cantidad_producto"
-				. ../BaseDeDatos/databaseManager.ksh -a "productos:$nombre_producto:$precio_producto:$cantidad_producto"
+				
+				#(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -a productos:"$nombre_producto":"$precio_producto":"$cantidad_producto")
+				(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -a productos:"$nombre_producto":"$precio_producto":"$cantidad_producto")
 		
-
-				if (($? != 0)); then
-					print "$respuesta"
-				fi
+				#if (($? != 0)); then
+				#	print "$respuesta"
+				#fi
 				#if (("$insertar" != 0 )); then
 				#	print "Se ha realizado la insercion"
 				#	print "$insertar"
