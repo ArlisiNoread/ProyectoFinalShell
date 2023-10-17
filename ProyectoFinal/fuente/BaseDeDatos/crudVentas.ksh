@@ -69,7 +69,8 @@ function remover {
 		exit 1
 	fi
 
-	################!!!!!!!!! Generar que se remuevan las lineas de VentasProductos
+	# Se borran las lineas de VentasProductos de esta venta.
+	./crudVentasProductos.ksh -k "$idVenta"
 
 	sed -i "/^$idVenta/d" "$nombreArchivo"
 }

@@ -83,8 +83,20 @@ function remover {
 		exit 1
 	fi
 
-	sed -i "/^$idVenta/d" "$nombreArchivo"
+	sed -i "/^$idVentaProducto/d" "$nombreArchivo"
 }
+
+function removerTodosDeUnaVenta {
+
+	idVenta="$1"
+	if [[ ! "$idVenta" =~ ^\d+$ ]]; then
+		print "Id de la venta debe ser un número natural."
+		exit 1
+	fi
+
+	sed -i "/^[^:]:$idVenta:.*$/d" "$nombreArchivo"
+}
+
 
 function checkVentaProductoLine {
 
@@ -203,7 +215,7 @@ function checkFile {
 
 }
 
-while getopts a:g:tu:r:cn: o; do
+while getopts a:g:tu:r:k:cn: o; do
 	case "$o" in
 	a)
 		aFlag=true
@@ -222,6 +234,10 @@ while getopts a:g:tu:r:cn: o; do
 	r)
 		rFlag=true
 		rFlagArg="$OPTARG"
+		;;
+	k)
+		kFlag=true
+		kFlagArg="$OPTARG"
 		;;
 	c)
 		cFlag=true
@@ -252,6 +268,9 @@ if [[ $tFlag ]]; then
 fi
 if [[ $rFlag ]]; then
 	remover "$rFlagArg"
+fi
+if [[ $kFlag ]]; then
+	removerTodosDeUnaVenta "$kFlagArg"
 fi
 if [[ $nFlag ]]; then
 	checkClienteLine "$nFlagArg"
