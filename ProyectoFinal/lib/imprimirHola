@@ -1,0 +1,5 @@
+#!/bin/ksh
+
+function imprimirHola {
+    print "Hola esta es una librería"
+}

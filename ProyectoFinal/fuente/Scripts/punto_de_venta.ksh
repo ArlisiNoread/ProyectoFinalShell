@@ -1,10 +1,27 @@
 #!/bin/ksh
+<<<<<<< HEAD
 # Nombre script: punto_de_venta.ksh
 # Descripcion:
 # 	  
 #	Este script es el encargado mandar las ordenes de altas, bajas, actualizar y de consultar
 #	en la base de datos del sistema, asi como de brindar un acceso simplificado a la informacion
 #	que se presenta.
+=======
+
+# Inicializar variables
+total=0
+productos=""
+
+# Función para agregar productos
+function agregar_producto {
+    echo "Ingrese el nombre del producto:"
+    read nombre
+    echo "Ingrese el precio del producto:"
+    read precio
+    productos="$productos$nombre (\$$precio) "
+    total=$((total + precio))
+}
+>>>>>>> origin
 
 
 # Menú principal
