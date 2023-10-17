@@ -17,3 +17,4 @@
 16:jabon:20.0:1
 17:canelitas:3.0:1
 18:Enjuague bucal:45.50:10
+19:cepillo de dientes:23.50:100
