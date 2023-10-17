@@ -1,6 +1,5 @@
 #!/bin/ksh
 
-
 # Inicializar variables
 total=0
 productos=""

@@ -1,6 +1,19 @@
 #!/bin/ksh
 
 
+################################################
+#     Nomas ando probando las librerías        #
+################################################
+export FPATH="$(pwd)/../lib"
+autoload imprimirHola
+imprimirHola
+################################################
+# A no ma si funciona                          #
+# Reglas para las librerías:                   #
+# El archivo debe llamarse igual a la función. #
+# No se porqué, si no no lo detecta            #
+################################################
+
 # Función para mostrar las opciones del menu principal
 mostrarMenu(){
 	echo Menu Principal
