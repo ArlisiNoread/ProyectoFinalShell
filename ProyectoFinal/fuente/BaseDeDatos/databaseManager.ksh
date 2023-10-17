@@ -5,11 +5,12 @@
 # Banderas:
 # -c: checar usuario:password -> -c "usuario:password"
 
+
 function addElement {
     addQuery="$1"
     if [[ ! "$addQuery" =~ ^[^:]+:.*$ ]]; then
         print "Query de agregado debe tener estructura basedatos:[objetoPorAgregar]"
-        return 1
+        exit 1
     fi
     database="$(echo "$addQuery" | sed 's/:.*$//')"
     objeto="$(echo "$addQuery" | sed 's/^[^:]*://g')"
@@ -24,7 +25,6 @@ function addElement {
         ;;
     productos)
         respuesta="$(./crudProductos.ksh -a "$objeto")"
-        print "$respuesta"
 
         if (($? != 0)); then
             print "$respuesta"
@@ -85,7 +85,9 @@ function checarUsuarioPassword {
     # Regresa usuario:nivel si es correcta la autenticación.
     # Si no lo es no regresa nada.
     # Revisar retorno de error en caso de mal parámetro
-
+    # Nivel usuario normal: 1
+    # Nivel usuario admin: 2
+    
     usuarioPassword="$1"
 
     if [[ ! "$usuarioPassword" =~ ^[^:]+:[^:]+$ ]]; then

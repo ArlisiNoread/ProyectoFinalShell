@@ -11,3 +11,4 @@
 13:pasta dental:32.0:9
 14:pasta dental:0.0:9
 15:papas:10.3:43
+16:jabon:20.0:1
