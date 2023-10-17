@@ -25,7 +25,13 @@ function addElement {
         ;;
     productos)
         respuesta="$(./crudProductos.ksh -a "$objeto")"
-
+        if (($? != 0)); then
+            print "$respuesta"
+            exit 1
+        fi
+        ;;
+    clientes)
+        respuesta="$(./crudClientes.ksh -a "$objeto")"
         if (($? != 0)); then
             print "$respuesta"
             exit 1
@@ -58,6 +64,9 @@ function obtenerElemento {
     productos)
         print "$(./crudProductos.ksh -g "$idElemento")"
         ;;
+    clientes)
+        print "$(./crudClientes.ksh -g "$idElemento")"
+        ;;
     [?])
         print "Opción de base datos inválida."
         exit 1
@@ -73,6 +82,9 @@ function obtenerTodosElementos {
         ;;
     productos)
         print "$(./crudProductos.ksh -t)"
+        ;;
+    clientes)
+        print "$(./crudClientes.ksh -t)"
         ;;
     [?])
         print "Opción de base datos inválida."
