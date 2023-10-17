@@ -1,16 +1,13 @@
-1:a:b:20
 2:a:b:20
 3:a:b:20
 4:a:b:20
 5:a:b:20
-6:a:b:20
 7:a:b:20
 8:a:b:20
-9:a:b:20
-10:a:b:20
-11:a:b:20
-12:a:b:20
-13:a:b:20
-14:a:b:20
-15:a:b:20
-16:a:b:20
+9:pasta dental:32.8:9
+10:pasta dental:32.8:9
+11:pasta dental:32.8:9
+12:pasta dental:32.:9
+13:pasta dental:32.0:9
+14:pasta dental:0.0:9
+15:papas:10.3:43

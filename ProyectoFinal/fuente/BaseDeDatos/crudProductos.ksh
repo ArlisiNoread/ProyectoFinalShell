@@ -14,60 +14,91 @@ readonly nombreArchivo="Productos.txt"
 
 function agregar {
 	producto="$1"
-	
+
 	if [[ ! "$producto" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
-			print "El producto debe ser del tipo nombre:costo:cantidadEnAlmacen \n"
-			return 1
-	fi 
+		print "El producto debe ser del tipo nombre:costo:cantidadEnAlmacen \n"
+		exit 1
+	fi
 
 	respuestaAnalisis=$(checkProductoLine "$producto")
 
 	if (($? != 0)); then
 		print "$respuestaAnalisis"
-		return 1
+		exit 1
 	fi
 
 	if [[ ! -s "$nombreArchivo" ]]; then
-		printf "1:%s\n" "$producto" >> "$nombreArchivo"
+		printf "1:%s\n" "$producto" >>"$nombreArchivo"
 	else
 		idMayor="$(sed '/^$/d' "$nombreArchivo" | tail -n 1 | awk -F: '{print $1}')"
 		((idMayor++))
 		print "$idMayor"
-		printf "\n%d:%s\n" "$idMayor" "$producto" >> "$nombreArchivo"
+		printf "\n%d:%s\n" "$idMayor" "$producto" >>"$nombreArchivo"
 		sed -i '/^$/d' "$nombreArchivo"
 	fi
+}
+
+function getElement {
+	# En este caso el identificador es el producto.
+	# Si el pructo existe regresa la linea.
+	# En caso contrario no regresa nada
+	print "$(cat "$nombreArchivo" | awk -F: -v producto="$1" '(producto == $1) {print $0; exit;}')"
+}
+
+function getAllElements {
+	# Regresa todos los Productos
+	print "$(cat "$nombreArchivo")"
+}
+
+function remover {
+
+	idProducto="$1"
+
+	if [[ ! "$idProducto" =~ ^\d+$ ]]; then
+		print "Id del producto debe ser un número natural."
+		exit 1
+	fi
+
+	sed -i "/^$idProducto/d" "$nombreArchivo"
 }
 
 function checkProductoLine {
 	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
 		#Formato id:nombre:costo:cantidadEnAlmacen
 		id="$(echo "$1" | awk -F: '{print $1}')"
+		costo="$(echo "$1" | awk -F: '{print $3}')"
 		cantidadEnAlmacen="$(echo "$1" | awk -F: '{print $4}')"
 	elif [[ "$1" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
 		#Formato nombre:costo:cantidadEnAlmacen
 		id=0
+		costo="$(echo "$1" | awk -F: '{print $2}')"
 		cantidadEnAlmacen="$(echo "$1" | awk -F: '{print $3}')"
 	else
 		print "Un producto debe ser del tipo id?:nombre:costo:cantidadEnAlmacen"
-		return 1
+		exit 1
 	fi
 
 	if [[ ! "$id" =~ ^\d+$ ]]; then
 		print "El id debe ser un número natural."
-		return 1
+		exit 1
+	fi
+
+	if [[ ! "$costo" =~ ^\d+(.\d+)?$ ]]; then
+		print "El costo debe ser un número real."
+		exit 1
 	fi
 
 	if [[ ! "$cantidadEnAlmacen" =~ ^\d+$ ]]; then
 		print "La cantidad en almacén debe ser un número natural."
-		return 1
+		exit 1
 	fi
 }
 
 function checkFile {
-	./checkeoGeneralDeArchivo.ksh "$nombreArchivo"
-	if [[ ! $? ]]; then
-		print "$?"
-		#exit
+	respuesta="$(./checkeoGeneralDeArchivo.ksh "$nombreArchivo")"
+	if (($? != 0)); then
+		print "$Respuesta"
+		exit 1
 	fi
 
 	cnt=0
@@ -108,11 +139,11 @@ function checkFile {
 		fi
 	done
 
-	if (( ${#idErrores[*]} > 0)); then
+	if ((${#idErrores[*]} > 0)); then
 		banderaError=true
 		errores+="Los identificadores deben ser únicos\n"
 		for error in "${idErrores[*]}"; do
-		errores+="$error\n"
+			errores+="$error\n"
 		done
 	fi
 
@@ -123,21 +154,25 @@ function checkFile {
 
 }
 
-while getopts a:g:u:r:cn: o; do
+while getopts a:g:tu:r:cn: o; do
 	case "$o" in
 	a)
 		aFlag=true
 		aFlagArg="$OPTARG"
 		;;
 	g)
-		print "get"
-		# paste=hpaste
+		gFlag=true
+		gFlagArg="$OPTARG"
+		;;
+	t)
+		tFlag=true
 		;;
 	u)
 		print "update"
 		;;
 	r)
-		print "remove"
+		rFlag=true
+		rFlagArg="$OPTARG"
 		;;
 	c)
 		cFlag=true
@@ -159,6 +194,15 @@ if [[ $cFlag ]]; then
 fi
 if [[ $aFlag ]]; then
 	agregar "$aFlagArg"
+fi
+if [[ $gFlag ]]; then
+	getElement "$gFlagArg"
+fi
+if [[ $tFlag ]]; then
+	getAllElements
+fi
+if [[ $rFlag ]]; then
+	remover "$rFlagArg"
 fi
 if [[ $nFlag ]]; then
 	checkProductoLine "$nFlagArg"

@@ -21,9 +21,63 @@ function addElement {
             print "$respuesta"
             exit 1
         fi
-
         ;;
-    [?]) ;;
+    productos)
+        respuesta="$(./crudProductos.ksh -a "$objeto")"
+        print "$respuesta"
+
+        if (($? != 0)); then
+            print "$respuesta"
+            exit 1
+        fi
+        ;;
+    insumos)
+        print "To do"
+        ;;
+    [?])
+        print "Opción de base datos inválida."
+        exit 1
+        ;;
+    esac
+}
+
+function obtenerElemento {
+    query="$1"
+    if [[ ! "$query" =~ ^[^:]+:[^:]+ ]]; then
+        print "Formato de query basedatos:llave"
+        exit 1
+    fi
+
+    basedatos="$(echo "$query" | awk -F: '{print $1}')"
+    idElemento="$(echo "$query" | awk -F: '{print $2}')"
+
+    case "$basedatos" in
+    usuarios)
+        print "$(./crudUsuarios.ksh -g "$idElemento")"
+        ;;
+    productos)
+        print "$(./crudProductos.ksh -g "$idElemento")"
+        ;;
+    [?])
+        print "Opción de base datos inválida."
+        exit 1
+        ;;
+    esac
+
+}
+
+function obtenerTodosElementos {
+    case "$1" in
+    usuarios)
+        print "$(./crudUsuarios.ksh -t)"
+        ;;
+    productos)
+        print "$(./crudProductos.ksh -t)"
+        ;;
+    [?])
+        print "Opción de base datos inválida."
+        exit 1
+        ;;
     esac
 }
 
@@ -36,7 +90,7 @@ function checarUsuarioPassword {
 
     if [[ ! "$usuarioPassword" =~ ^[^:]+:[^:]+$ ]]; then
         print "El parámetro debe ser de tipo usuario:password"
-        return 1
+        exit 1
     fi
 
     usuarioPorChecar="$(echo "$usuarioPassword" | awk -F: '{print $1}')"
@@ -45,7 +99,7 @@ function checarUsuarioPassword {
     usuarioEnBD="$(./crudUsuarios.ksh -g "$usuarioPorChecar")"
 
     if [[ -z "$usuarioEnBD" ]]; then
-        return
+        exit
     fi
 
     passwordUsuarioEnBD="$(echo "$usuarioEnBD" | awk -F: '{print $3}')"
@@ -56,13 +110,22 @@ function checarUsuarioPassword {
     fi
 }
 
-while getopts a:c: o; do
+while getopts a:g:t:c: o; do
     case "$o" in
     a)
         # Agregar
         aFlag=true
         aFlagArg="$OPTARG"
 
+        ;;
+    g)
+        #Obtener
+        gFlag=true
+        gFlagArg="$OPTARG"
+        ;;
+    t)
+        tFlag=true
+        tFlagArg="$OPTARG"
         ;;
     c)
         # Checar usuario PassWord
@@ -84,4 +147,10 @@ if [[ $cFlag ]]; then
 fi
 if [[ $aFlag ]]; then
     addElement "$aFlagArg"
+fi
+if [[ $gFlag ]]; then
+    obtenerElemento "$gFlagArg"
+fi
+if [[ $tFlag ]]; then
+    obtenerTodosElementos "$tFlagArg"
 fi

@@ -58,6 +58,11 @@ function getElement {
 	print "$(cat "$nombreArchivo" | awk -F: -v usuario="$1" '(usuario == $2) {print $0; exit;}')"
 }
 
+function getAllElements {
+	# Regresa todos los usuarios
+	print "$(cat "$nombreArchivo")"
+}
+
 function checkUsuarioLine {
 	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
 		#Formato id:usuario:password:nivel
@@ -85,9 +90,10 @@ function checkUsuarioLine {
 
 function checkFile {
 	./checkeoGeneralDeArchivo.ksh "$nombreArchivo"
-	if [[ ! $? ]]; then
-		print "$?"
-		#exit
+	respuesta="$(./checkeoGeneralDeArchivo.ksh "$nombreArchivo")"
+	if (($? != 0))  ; then
+		print "$Respuesta"
+		exit 1
 	fi
 
 	cnt=0
@@ -166,7 +172,7 @@ function checkFile {
 
 }
 
-while getopts a:g:u:r:cn: o; do
+while getopts a:g:tu:r:cn: o; do
 	case "$o" in
 	a)
 		aFlag=true
@@ -175,6 +181,9 @@ while getopts a:g:u:r:cn: o; do
 	g)
 		gFlag=true
 		gFlagArg="$OPTARG"
+		;;
+	t)
+		tFlag=true
 		;;
 	u)
 		print "update"
@@ -205,6 +214,9 @@ if [[ $aFlag ]]; then
 fi
 if [[ $gFlag ]]; then
 	getElement "$gFlagArg"
+fi
+if [[ $tFlag ]]; then
+	getAllElements
 fi
 if [[ $nFlag ]]; then
 	checkProductoLine "$nFlagArg"
