@@ -52,14 +52,15 @@ function agregar {
 	ventaProductoCorregido="$(echo "$ventaProducto" | sed "s/:.*:/:$productoConcatenado:/")"
 
 	if [[ ! -s "$nombreArchivo" ]]; then
+		idMayor=1
 		printf "1:%s\n" "$ventaProductoCorregido" >>"$nombreArchivo"
 	else
 		idMayor="$(sed '/^$/d' "$nombreArchivo" | tail -n 1 | awk -F: '{print $1}')"
 		((idMayor++))
-		print "$idMayor"
 		printf "\n%d:%s\n" "$idMayor" "$ventaProductoCorregido" >>"$nombreArchivo"
 		sed -i '/^$/d' "$nombreArchivo"
 	fi
+	print "$idMayor"
 }
 
 function getElement {

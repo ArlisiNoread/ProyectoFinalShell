@@ -5,7 +5,6 @@
 # Banderas:
 # -c: checar usuario:password -> -c "usuario:password"
 
-
 function addElement {
     addQuery="$1"
     if [[ ! "$addQuery" =~ ^[^:]+:.*$ ]]; then
@@ -18,22 +17,41 @@ function addElement {
     case "$database" in
     usuarios)
         respuesta="$(./crudUsuarios.ksh -a "$objeto")"
+        print "$respuesta"
         if (($? != 0)); then
-            print "$respuesta"
             exit 1
         fi
         ;;
     productos)
         respuesta="$(./crudProductos.ksh -a "$objeto")"
+        print "$respuesta"
         if (($? != 0)); then
-            print "$respuesta"
             exit 1
         fi
         ;;
     clientes)
         respuesta="$(./crudClientes.ksh -a "$objeto")"
+        print "$respuesta"
         if (($? != 0)); then
-            print "$respuesta"
+            exit 1
+        fi
+        ;;
+    ventas)
+        #Solo requiere el id del cliente
+        if [[ ! "$objeto" =~ ^\d+$ ]]; then
+            print "El id del cliente debe ser un número natural."
+            exit 1
+        fi
+        respuesta="$(./crudVentas.ksh -a "$objeto:$(date +"%d-%m-%y/%H-%M-%S")")"
+        print "$respuesta"
+        if (($? != 0)); then
+            exit 1
+        fi
+        ;;
+    ventasproductos)
+        respuesta="$(./crudVentasProductos.ksh -a "$objeto")"
+        print "$respuesta"
+        if (($? != 0)); then
             exit 1
         fi
         ;;
@@ -99,7 +117,7 @@ function checarUsuarioPassword {
     # Revisar retorno de error en caso de mal parámetro
     # Nivel usuario normal: 1
     # Nivel usuario admin: 2
-    
+
     usuarioPassword="$1"
 
     if [[ ! "$usuarioPassword" =~ ^[^:]+:[^:]+$ ]]; then

@@ -40,14 +40,15 @@ function agregar {
 	fi
 
 	if [[ ! -s "$nombreArchivo" ]]; then
+		idMayor=1
 		printf "1:%s\n" "$usuarioObject" >>"$nombreArchivo"
 	else
 		idMayor="$(sed '/^$/d' "$nombreArchivo" | tail -n 1 | awk -F: '{print $1}')"
 		((idMayor++))
-		print "$idMayor"
 		printf "\n%d:%s\n" "$idMayor" "$usuarioObject" >>"$nombreArchivo"
 		sed -i '/^$/d' "$nombreArchivo"
 	fi
+	print "$idMayor"
 
 }
 
