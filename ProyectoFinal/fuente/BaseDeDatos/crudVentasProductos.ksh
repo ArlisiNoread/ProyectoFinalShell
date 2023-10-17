@@ -44,13 +44,20 @@ function agregar {
 		exit 1
 	fi
 
+	nombreProducto="$(echo "$revisarSiExisteProducto" | awk -F: '{print $2}')"
+	costo="$(echo "$revisarSiExisteProducto" | awk -F: '{print $3}')"
+
+	productoConcatenado="$nombreProducto-$costo"
+
+	ventaProductoCorregido="$(echo "$ventaProducto" | sed "s/:.*:/:$productoConcatenado:/")"
+
 	if [[ ! -s "$nombreArchivo" ]]; then
-		printf "1:%s\n" "$ventaProducto" >>"$nombreArchivo"
+		printf "1:%s\n" "$ventaProductoCorregido" >>"$nombreArchivo"
 	else
 		idMayor="$(sed '/^$/d' "$nombreArchivo" | tail -n 1 | awk -F: '{print $1}')"
 		((idMayor++))
 		print "$idMayor"
-		printf "\n%d:%s\n" "$idMayor" "$ventaProducto" >>"$nombreArchivo"
+		printf "\n%d:%s\n" "$idMayor" "$ventaProductoCorregido" >>"$nombreArchivo"
 		sed -i '/^$/d' "$nombreArchivo"
 	fi
 }
@@ -80,12 +87,32 @@ function remover {
 }
 
 function checkVentaProductoLine {
-	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
-		#Formato id:fk-Venta:fk-Producto:cantidad
+
+	if [[ "$1" =~ ^[^:]+:[^:]+:[^:-]+-[^:-]+:[^:]+$ ]]; then
+		#Formato id:fk-Venta:nombreProducto-costo:cantidad
 		id="$(echo "$1" | awk -F: '{print $1}')"
 		fkVenta="$(echo "$1" | awk -F: '{print $2}')"
-		fkProducto="$(echo "$1" | awk -F: '{print $3}')"
+		nombreProductoCosto="$(echo "$1" | awk -F: '{print $3}')"
+		costo="$(echo "$nombreProductoCosto" | awk -F '-' '{print $2}')"
 		cantidad="$(echo "$1" | awk -F: '{print $4}')"
+
+		if [[ ! "$id" =~ ^\d+$ ]]; then
+			print "El id debe ser un número natural."
+			exit 1
+		fi
+		if [[ ! "$fkVenta" =~ ^\d+$ ]]; then
+			print "La fk-venta debe ser un número natural."
+			exit 1
+		fi
+		if [[ ! "$costo" =~ ^\d+(.\d+)?$ ]]; then
+			print "El costo debe ser un número real."
+			exit 1
+		fi
+		if [[ ! "$cantidad" =~ ^\d+$ ]]; then
+			print "La cantidad debe ser un número natural."
+			exit 1
+		fi
+		exit
 	elif [[ "$1" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
 		#Formato fk-Venta:fk-Producto:cantidad
 		id=0
@@ -101,17 +128,14 @@ function checkVentaProductoLine {
 		print "El id debe ser un número natural."
 		exit 1
 	fi
-
 	if [[ ! "$fkVenta" =~ ^\d+$ ]]; then
 		print "La fk-venta debe ser un número natural."
 		exit 1
 	fi
-
 	if [[ ! "$fkProducto" =~ ^\d+$ ]]; then
 		print "La fk-producto debe ser un número natural."
 		exit 1
 	fi
-
 	if [[ ! "$cantidad" =~ ^\d+$ ]]; then
 		print "La cantidad debe ser un número natural."
 		exit 1
@@ -119,6 +143,7 @@ function checkVentaProductoLine {
 }
 
 function checkFile {
+
 	respuesta="$(./checkeoGeneralDeArchivo.ksh "$nombreArchivo")"
 	if (($? != 0)); then
 		print "$Respuesta"
@@ -136,11 +161,11 @@ function checkFile {
 		if [[ -z "$linea" ]]; then
 			continue
 		fi
-		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
-			errores+="Error en linea $cnt : Una venta debe ser del tipo id:fk-cliente:dateTime[día-mes-año/hora-minuto-segundo]\n"
+		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:-]+-[^:-]+:[^:]+$ ]]; then
+			errores+="Error en linea $cnt : Una ventaProducto debe ser del tipo id:fk-venta:nombreProducto-costo:cantidad\n"
 			banderaError=true
 		else
-			resultado=$(checkVentaLine "$linea")
+			resultado=$(checkVentaProductoLine "$linea")
 			if (($? == 1)); then
 				errores+="Error en linea $cnt : $resultado \n"
 				banderaError=true
