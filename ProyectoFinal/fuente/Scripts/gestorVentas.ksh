@@ -10,14 +10,14 @@
 
 while true; do
 	printf "\n\n\t\t===================  MU & ME ====================\n"
-	printf "\n\t\t                 Gestor de productos  		 \n"
+	printf "\n\t\t                 Gestor de Ventas  		 \n"
 	printf "\n\n\t\t=================================================\n"
 	printf "\n\n\n"
 
 
-	printf "\t 1. Dar de alta un producto \n"
-	printf "\t 2. Consultar un producto \n"
-	printf "\t 3. Visualizar los productos \n"
+	printf "\t 1. Registrar venta \n"
+	printf "\t 2. Consultar informacion de la venta \n"
+	printf "\t 3. Visualizar las ventas \n"
 	printf "\t 4. Volver al menu principal \n"
 	printf "\t ======================\n"
 	printf "\t Total: \$$total \n"
@@ -31,13 +31,13 @@ while true; do
 	case $opcion in
 		1)
 			while ((op != 1 )); do
-				print -n "Nombre del producto: "
+				print -n "Nombre del cliente: "
 				read nombre_producto
 				print -n "Precio: "
 				read precio_producto
 				print -n "Cantidad: "
 				read cantidad_producto			
-				(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -a productos:"$nombre_producto":"$precio_producto":"$cantidad_producto")
+				(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -a usuarios:"$nombre_producto":"$precio_producto":"$cantidad_producto")
 				print "$respuesta"
 				print "Presione 1 para salir "
 				print "Presione 0 para seguir agregando"
@@ -56,6 +56,7 @@ while true; do
 		   ;;
 	   	4)	clear
 			source ./punto_de_venta.ksh	
+			op=0
 		   ;;
 	   	*)
 		   	echo "Opción no válida. Intente de nuevo."

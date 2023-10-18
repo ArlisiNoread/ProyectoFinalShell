@@ -10,19 +10,16 @@
 
 while true; do
 	printf "\n\n\t\t===================  MU & ME ====================\n"
-	printf "\n\t\t                 Gestor de productos  		 \n"
+	printf "\n\t\t                 Gestor de Usuarios  		 \n"
 	printf "\n\n\t\t=================================================\n"
 	printf "\n\n\n"
 
 
-	printf "\t 1. Dar de alta un producto \n"
-	printf "\t 2. Consultar un producto \n"
-	printf "\t 3. Visualizar los productos \n"
+	printf "\t 1. Dar de alta un usuario \n"
+	printf "\t 2. Consultar informacion de un usuario \n"
+	printf "\t 3. Visualizar los usuarios \n"
 	printf "\t 4. Volver al menu principal \n"
 	printf "\t ======================\n"
-	printf "\t Total: \$$total \n"
-	printf "\t Productos: $productos \n"
-	printf "\t ====================== \n"
 
 	printf "\t\n"
    	print -n "Seleccione una opción:"
@@ -31,14 +28,14 @@ while true; do
 	case $opcion in
 		1)
 			while ((op != 1 )); do
-				print -n "Nombre del producto: "
-				read nombre_producto
-				print -n "Precio: "
-				read precio_producto
-				print -n "Cantidad: "
-				read cantidad_producto			
-				(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -a productos:"$nombre_producto":"$precio_producto":"$cantidad_producto")
-				print "$respuesta"
+				print -n "Nombre del usuario: "
+				read nombre_usuario
+				print -n "Contraseña: "
+				read password_usuario
+				print -n "Nivel de usuario: "
+				read nivel_usuario			
+				(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -a usuarios:"$nombre_usuario":"$password_usuario":"$nivel_usuario")
+				print "$?"
 				print "Presione 1 para salir "
 				print "Presione 0 para seguir agregando"
 				print -n "Digite una opcion: "
@@ -56,6 +53,7 @@ while true; do
 		   ;;
 	   	4)	clear
 			source ./punto_de_venta.ksh	
+			op=0
 		   ;;
 	   	*)
 		   	echo "Opción no válida. Intente de nuevo."
