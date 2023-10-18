@@ -36,8 +36,10 @@ while true; do
 				read nivel_usuario			
 				(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -a usuarios:"$nombre_usuario":"$password_usuario":"$nivel_usuario")
 				print "$?"
-				print "Presione 1 para salir "
-				print "Presione 0 para seguir agregando"
+				
+				printf "\t ======================\n"
+				printf "\t Presione 1 para salir \n"
+				printf "\t Presione 0 para seguir agregando\n"
 				print -n "Digite una opcion: "
 				read op
 			done
@@ -45,9 +47,19 @@ while true; do
 			op=0
 		   ;;
 	  	2)
-		#	while ((op != 1 )); do
-				
-		#	done
+			while ((op != 1 )); do
+				print -n "Ingrese el id del usuario a desplegar la informacion: "
+				read id_usuario	
+				typeset consulta
+				(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -g usuarios:"$id_usuario")
+				print "$consulta"
+					
+				printf "\t ======================\n"
+				printf "\t Presione 1 para salir \n"
+				printf "\t Presione 0 para seguir consultando\n"
+				print -n "Digite una opcion: "
+				read op
+			done
 		   ;;
 	  	3)
 		   ;;
