@@ -10,17 +10,18 @@
 # -r: remove -> -r "por ver"
 # -c: checar salud del archivo.
 
-readonly nombreArchivo="Productos.txt"
+readonly nombreArchivo="Clientes.txt"
 
 function agregar {
-	producto="$1"
+	cliente="$1"
 
-	if [[ ! "$producto" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
-		print "El producto debe ser del tipo nombre:costo:cantidadEnAlmacen \n"
+	# Se verifican que sea de tipo nombre:celular:dirección
+	if [[ ! "$cliente" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+		print "El producto debe ser del tipo nombre:celular:dirección \n"
 		exit 1
 	fi
 
-	respuestaAnalisis=$(checkProductoLine "$producto")
+	respuestaAnalisis=$(checkClienteLine "$cliente")
 
 	if (($? != 0)); then
 		print "$respuestaAnalisis"
@@ -29,22 +30,21 @@ function agregar {
 
 	if [[ ! -s "$nombreArchivo" ]]; then
 		idMayor=1
-		printf "1:%s\n" "$producto" >>"$nombreArchivo"
+		printf "1:%s\n" "$cliente" >>"$nombreArchivo"
 	else
 		idMayor="$(sed '/^$/d' "$nombreArchivo" | tail -n 1 | awk -F: '{print $1}')"
 		((idMayor++))
-		printf "\n%d:%s\n" "$idMayor" "$producto" >>"$nombreArchivo"
+		printf "\n%d:%s\n" "$idMayor" "$cliente" >>"$nombreArchivo"
 		sed -i '/^$/d' "$nombreArchivo"
 	fi
 	print "$idMayor"
-
 }
 
 function getElement {
-	# En este caso el identificador es el producto.
-	# Si el pructo existe regresa la linea.
+	# En este caso el identificador es el id del cliente.
+	# Si el cliente existe regresa la linea.
 	# En caso contrario no regresa nada
-	print "$(cat "$nombreArchivo" | awk -F: -v producto="$1" '(producto == $1) {print $0; exit;}')"
+	print "$(cat "$nombreArchivo" | awk -F: -v cliente="$1" '(cliente == $1) {print $0; exit;}')"
 }
 
 function getAllElements {
@@ -54,29 +54,27 @@ function getAllElements {
 
 function remover {
 
-	idProducto="$1"
+	idCliente="$1"
 
-	if [[ ! "$idProducto" =~ ^\d+$ ]]; then
+	if [[ ! "$idCliente" =~ ^\d+$ ]]; then
 		print "Id del producto debe ser un número natural."
 		exit 1
 	fi
 
-	sed -i "/^$idProducto/d" "$nombreArchivo"
+	sed -i "/^$idCliente/d" "$nombreArchivo"
 }
 
-function checkProductoLine {
+function checkClienteLine {
 	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
-		#Formato id:nombre:costo:cantidadEnAlmacen
+		#Formato id:nombre:celular:direccion
 		id="$(echo "$1" | awk -F: '{print $1}')"
-		costo="$(echo "$1" | awk -F: '{print $3}')"
-		cantidadEnAlmacen="$(echo "$1" | awk -F: '{print $4}')"
+		celular="$(echo "$1" | awk -F: '{print $3}')"
 	elif [[ "$1" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
-		#Formato nombre:costo:cantidadEnAlmacen
+		#Formato nombre:celular:direccion
 		id=0
-		costo="$(echo "$1" | awk -F: '{print $2}')"
-		cantidadEnAlmacen="$(echo "$1" | awk -F: '{print $3}')"
+		celular="$(echo "$1" | awk -F: '{print $2}')"
 	else
-		print "Un producto debe ser del tipo id?:nombre:costo:cantidadEnAlmacen"
+		print "Un cliente debe ser del tipo id?:nombre:celular:dirección"
 		exit 1
 	fi
 
@@ -85,13 +83,8 @@ function checkProductoLine {
 		exit 1
 	fi
 
-	if [[ ! "$costo" =~ ^\d+(.\d+)?$ ]]; then
-		print "El costo debe ser un número real."
-		exit 1
-	fi
-
-	if [[ ! "$cantidadEnAlmacen" =~ ^\d+$ ]]; then
-		print "La cantidad en almacén debe ser un número natural."
+	if [[ ! "$celular" =~ ^(\+|\d)[0-9]{7,16}$ ]]; then
+		print "El celular debe tener formato de número celular tradicional."
 		exit 1
 	fi
 }
@@ -115,10 +108,10 @@ function checkFile {
 			continue
 		fi
 		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
-			errores+="Error en linea $cnt : Un producto debe ser del tipo id?:nombre:costo:cantidadEnAlmacen \n"
+			errores+="Error en linea $cnt : Un cliente debe ser del tipo id?:nombre:celular:direccion \n"
 			banderaError=true
 		else
-			resultado=$(checkProductoLine "$linea")
+			resultado=$(checkClienteLine "$linea")
 			if (($? == 1)); then
 				errores+="Error en linea $cnt : $resultado \n"
 				banderaError=true
@@ -207,5 +200,5 @@ if [[ $rFlag ]]; then
 	remover "$rFlagArg"
 fi
 if [[ $nFlag ]]; then
-	checkProductoLine "$nFlagArg"
+	checkClienteLine "$nFlagArg"
 fi

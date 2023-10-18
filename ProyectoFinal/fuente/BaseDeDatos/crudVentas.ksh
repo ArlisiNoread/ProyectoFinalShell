@@ -10,73 +10,85 @@
 # -r: remove -> -r "por ver"
 # -c: checar salud del archivo.
 
-readonly nombreArchivo="Productos.txt"
+readonly nombreArchivo="Ventas.txt"
 
 function agregar {
-	producto="$1"
+	venta="$1"
 
-	if [[ ! "$producto" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
-		print "El producto debe ser del tipo nombre:costo:cantidadEnAlmacen \n"
+	# Se verifican que sea de tipo fk-idCliente:dateTime["%d-%m-%y/%H-%M-%S"]
+	if [[ ! "$venta" =~ ^[^:]+:[^:]+$ ]]; then
+		# Para obtener las ventas con este formato se usa 'date +"%d-%m-%y/%H-%M-%S"'
+		print "La Ventas debe ser del tipo fk-Cliente:dateTime["%d-%m-%y/%H-%M-%S"]\n"
 		exit 1
 	fi
 
-	respuestaAnalisis=$(checkProductoLine "$producto")
+	respuestaAnalisis="$(checkVentaLine "$venta")"
 
 	if (($? != 0)); then
 		print "$respuestaAnalisis"
 		exit 1
 	fi
 
+	fkCliente="$(echo "$venta" | awk -F: '{print $1}')"
+	revisarSiExisteCliente="$(./crudClientes.ksh -g "$fkCliente")"
+
+	if [ -z "$revisarSiExisteCliente" ]; then
+		print "Cliente no existe en base de datos."
+		exit 1
+	fi
+
 	if [[ ! -s "$nombreArchivo" ]]; then
 		idMayor=1
-		printf "1:%s\n" "$producto" >>"$nombreArchivo"
+		printf "1:%s\n" "$venta" >>"$nombreArchivo"
 	else
 		idMayor="$(sed '/^$/d' "$nombreArchivo" | tail -n 1 | awk -F: '{print $1}')"
 		((idMayor++))
-		printf "\n%d:%s\n" "$idMayor" "$producto" >>"$nombreArchivo"
+		printf "\n%d:%s\n" "$idMayor" "$venta" >>"$nombreArchivo"
 		sed -i '/^$/d' "$nombreArchivo"
 	fi
 	print "$idMayor"
-
 }
 
 function getElement {
-	# En este caso el identificador es el producto.
-	# Si el pructo existe regresa la linea.
+	# En este caso el identificador es el id de la venta.
+	# Si la venta existe regresa la linea.
 	# En caso contrario no regresa nada
-	print "$(cat "$nombreArchivo" | awk -F: -v producto="$1" '(producto == $1) {print $0; exit;}')"
+	print "$(cat "$nombreArchivo" | awk -F: -v venta="$1" '(venta == $1) {print $0; exit;}')"
 }
 
 function getAllElements {
-	# Regresa todos los Productos
+	# Regresa todos las ventas
 	print "$(cat "$nombreArchivo")"
 }
 
 function remover {
 
-	idProducto="$1"
+	idVenta="$1"
 
-	if [[ ! "$idProducto" =~ ^\d+$ ]]; then
-		print "Id del producto debe ser un número natural."
+	if [[ ! "$idVenta" =~ ^\d+$ ]]; then
+		print "Id de la venta debe ser un número natural."
 		exit 1
 	fi
 
-	sed -i "/^$idProducto/d" "$nombreArchivo"
+	# Se borran las lineas de VentasProductos de esta venta.
+	./crudVentasProductos.ksh -k "$idVenta"
+
+	sed -i "/^$idVenta/d" "$nombreArchivo"
 }
 
-function checkProductoLine {
-	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
-		#Formato id:nombre:costo:cantidadEnAlmacen
+function checkVentaLine {
+	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+		#Formato id:fk-cliente:dateTime["%d-%m-%Y/%H-%M-%S"]
 		id="$(echo "$1" | awk -F: '{print $1}')"
-		costo="$(echo "$1" | awk -F: '{print $3}')"
-		cantidadEnAlmacen="$(echo "$1" | awk -F: '{print $4}')"
-	elif [[ "$1" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
-		#Formato nombre:costo:cantidadEnAlmacen
+		fkCliente="$(echo "$1" | awk -F: '{print $2}')"
+		dateTime="$(echo "$1" | awk -F: '{print $3}')"
+	elif [[ "$1" =~ ^[^:]+:[^:]+$ ]]; then
+		#Formato nombre:celular:direccion
 		id=0
-		costo="$(echo "$1" | awk -F: '{print $2}')"
-		cantidadEnAlmacen="$(echo "$1" | awk -F: '{print $3}')"
+		fkCliente="$(echo "$1" | awk -F: '{print $1}')"
+		dateTime="$(echo "$1" | awk -F: '{print $2}')"
 	else
-		print "Un producto debe ser del tipo id?:nombre:costo:cantidadEnAlmacen"
+		print "Una venta debe ser del tipo id?:fk-cliente:dateTime["%d-%m-%Y/%H-%M-%S"]"
 		exit 1
 	fi
 
@@ -85,13 +97,13 @@ function checkProductoLine {
 		exit 1
 	fi
 
-	if [[ ! "$costo" =~ ^\d+(.\d+)?$ ]]; then
-		print "El costo debe ser un número real."
+	if [[ ! "$fkCliente" =~ ^\d+$ ]]; then
+		print "El fk-cliente debe ser un número natural."
 		exit 1
 	fi
 
-	if [[ ! "$cantidadEnAlmacen" =~ ^\d+$ ]]; then
-		print "La cantidad en almacén debe ser un número natural."
+	if [[ ! "$dateTime" =~ ^\d+-\d+-\d+\/\d+-\d+-\d+$ ]]; then
+		print "El dateTime debe tener formato de "%d-%m-%Y/%H-%M-%S"."
 		exit 1
 	fi
 }
@@ -114,11 +126,11 @@ function checkFile {
 		if [[ -z "$linea" ]]; then
 			continue
 		fi
-		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
-			errores+="Error en linea $cnt : Un producto debe ser del tipo id?:nombre:costo:cantidadEnAlmacen \n"
+		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+			errores+="Error en linea $cnt : Una venta debe ser del tipo id:fk-cliente:dateTime[día-mes-año/hora-minuto-segundo]\n"
 			banderaError=true
 		else
-			resultado=$(checkProductoLine "$linea")
+			resultado=$(checkVentaLine "$linea")
 			if (($? == 1)); then
 				errores+="Error en linea $cnt : $resultado \n"
 				banderaError=true
@@ -207,5 +219,5 @@ if [[ $rFlag ]]; then
 	remover "$rFlagArg"
 fi
 if [[ $nFlag ]]; then
-	checkProductoLine "$nFlagArg"
+	checkClienteLine "$nFlagArg"
 fi

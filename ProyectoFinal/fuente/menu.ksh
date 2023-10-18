@@ -1,14 +1,14 @@
 #!/bin/ksh
 
-(cd ./BaseDeDatos/ ; ./databaseManager.ksh -t usuarios)
+#(cd ./BaseDeDatos/ ; ./databaseManager.ksh -t usuarios)
 #print "$(./databaseManager.ksh -t 'usuarios')"
 
 ################################################
 #     Nomas ando probando las librerías        #
 ################################################
-export FPATH="$(pwd)/../lib"
-autoload imprimirHola
-imprimirHola
+#export FPATH="$(pwd)/../lib"
+#autoload imprimirHola
+#imprimirHola
 ################################################
 # A no ma si funciona                          #
 # Reglas para las librerías:                   #
