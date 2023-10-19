@@ -22,53 +22,63 @@ while true; do
 	printf "\n\n\t\t=================================================\n"
 	printf "\n\n\n"
 
-
 	printf "\t 1. Dar de alta un producto \n"
 	printf "\t 2. Consultar un producto \n"
 	printf "\t 3. Visualizar los productos \n"
 	printf "\t 4. Volver al menu principal \n"
 	printf "\t ======================\n"
-	printf "\t Total: \$$total \n"
-	printf "\t Productos: $productos \n"
-	printf "\t ====================== \n"
-
 	printf "\t\n"
    	print -n "Seleccione una opción:"
    	read opcion
 
 	case $opcion in
 		1)
-			while ((op != 1 )); do
-				print -n "Nombre del producto: "
+                # 
+                print -n "Nombre del producto: "
 				read nombre_producto
 				print -n "Precio: "
 				read precio_producto
 				print -n "Cantidad: "
-				read cantidad_producto			
-				(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -a productos:"$nombre_producto":"$precio_producto":"$cantidad_producto")
-				print "$respuesta"
-				print "Presione 1 para salir "
-				print "Presione 0 para seguir agregando"
-				print -n "Digite una opcion: "
-				read op
-			done
-			clear
-			op=0
-		   ;;
+				read cantidad_producto	
+
+#			-a productos:"$nombre_producto":"$precio_producto":"$cantidad_producto"
+				respuesta="$(bd -a productos:"$nombre_producto":"$precio_producto":"$cantidad_producto")"
+				easyTput colortexto rojo
+                print "\n\t Numero de producto: $respuesta"
+                easyTput reset
+
+        ;;
+
 	  	2)
-		#	while ((op != 1 )); do
-				
-		#	done
-		   ;;
-	  	3)
-		   ;;
-	   	4)	#clear
-			#source ./punto_de_venta.ksh	
-			break
-		   ;;
+            easyTput colortexto verde
+			print -n "\t Ingresa el ID del producto a buscar: "
+			read prod
+			easyTput reset
+			easyTput colortexto rojo
+			venta="$(bd -g "productos:$prod")"
+            print "\t $venta:" |  sed 's/:/\t/g'
+			easyTput reset
+		;;
+
+		3)
+            easyTput colortexto verde
+			print -n "\t Todos los productos\n"
+			easyTput reset
+			easyTput colortexto rojo
+			venta="$(bd -t "productos")"
+			print "$venta" | sed -e 's/:/\t/g' -e '1,$s/^/\t/g'
+			easyTput reset
+		;;
+
+		4)
+            break
+            ;;
 	   	*)
-		   	echo "Opción no válida. Intente de nuevo."
-		   	read -p "Presione Enter para continuar..."
+		   	
+		   	easyTput colortexto rojo
+		    print "\t Ingresa una opción valida\n"
+		    easyTput reset
+		   	
 		   ;;
 	esac
 done
