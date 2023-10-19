@@ -5,6 +5,14 @@
 # Banderas:
 # -c: checar usuario:password -> -c "usuario:password"
 
+if [ "$0" =~ ^*databaseManager.ksh$ ]; then
+    libreriaDesdeScript=true
+    export FPATH="$(pwd)/../../lib"
+    autoload easyTput
+    autoload bd
+    autoload log
+fi
+
 function cleanup {
     #Se realizan procesos de salida.
     codigoSalida="$?"
@@ -14,6 +22,8 @@ function cleanup {
 #Traps
 trap 'cleanup' EXIT
 trap 'cleanup' INT HUP QUIT TERM ALRM USR1
+
+
 
 function addElement {
     addQuery="$1"

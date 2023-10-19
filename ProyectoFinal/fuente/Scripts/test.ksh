@@ -7,6 +7,7 @@ if [ "$0" =~ ^*test.ksh$ ]; then
     export FPATH="$(pwd)/../../lib"
     autoload easyTput
     autoload bd
+    autoload log
 fi
 
 bd -t clientes

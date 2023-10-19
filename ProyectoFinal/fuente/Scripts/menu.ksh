@@ -7,6 +7,7 @@ if [ "$0" =~ ^*menu.ksh$ ]; then
     export FPATH="$(pwd)/../../lib"
     autoload easyTput
     autoload bd
+    autoload log
 fi
 
 # Función para mostrar las opciones del menu principal

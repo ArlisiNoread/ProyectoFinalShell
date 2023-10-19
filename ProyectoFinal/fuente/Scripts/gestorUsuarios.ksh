@@ -13,6 +13,7 @@ if [ "$0" =~ ^*gestorUsuarios.ksh$ ]; then
     export FPATH="$(pwd)/../../lib"
     autoload easyTput
     autoload bd
+    autoload log
 fi
 
 # Menu principal

@@ -12,6 +12,7 @@ if [ "$0" =~ ^*punto_de_venta.ksh$ ]; then
     export FPATH="$(pwd)/../../lib"
     autoload easyTput
     autoload bd
+    autoload log
 fi
 
 

@@ -5,4 +5,5 @@ if [ "$0" =~ ^*gestorVentasProductos.ksh$ ]; then
     export FPATH="$(pwd)/../../lib"
     autoload easyTput
     autoload bd
+    autoload log
 fi
