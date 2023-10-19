@@ -8,8 +8,6 @@ clear
 ################################################
 
 
-source ./Scripts/test.ksh
-
 ################################################
 # A no ma si funciona                          #
 # Reglas para las librerías:                   #
@@ -54,19 +52,19 @@ while true; do
 
 	case $opcion in
 	1)
-		source ./Scripts/gestorProductos.ksh
+		source ./gestorProductos.ksh
 		;;
 	2)
-		source ./Scripts/gestorClientes.ksh
+		source ./gestorClientes.ksh
 		;;
 	3)
-		source ./Scripts/gestorVentas.ksh
+		source ./gestorVentas.ksh
 		;;
 	4)
-		source ./Scripts/gestorVentasProductos.ksh
+		source ./gestorVentasProductos.ksh
 		;;
 	5)
-		source ./Scripts/gestorUsuarios.ksh
+		source ./gestorUsuarios.ksh
 		;;
 	6)
 		clear
