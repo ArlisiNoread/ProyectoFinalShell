@@ -6,10 +6,9 @@
 ################################################
 #     Nomas ando probando las librerías        #
 ################################################
-export FPATH="$(pwd)/../lib"
-autoload easyTput
 
 
+source ./Scripts/test.ksh
 
 ################################################
 # A no ma si funciona                          #

@@ -1,0 +1,9 @@
+#!/bin/ksh
+
+function bd {
+    respuesta="$(
+        cd ./BaseDeDatos
+        ./databaseManager.ksh $*
+    )"
+    print "$respuesta"
+}

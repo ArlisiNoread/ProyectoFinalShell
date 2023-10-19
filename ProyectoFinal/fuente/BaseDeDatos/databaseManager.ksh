@@ -142,22 +142,29 @@ function checarUsuarioPassword {
     fi
 }
 
-while getopts a:g:t:c: o; do
+while getopts a:g:t:c:u:r: o; do
     case "$o" in
     a)
-        # Agregar
+        # Agregar - add
         aFlag=true
         aFlagArg="$OPTARG"
 
         ;;
     g)
-        #Obtener
+        # Obtener - get
         gFlag=true
         gFlagArg="$OPTARG"
         ;;
     t)
+        # Obtener todos
         tFlag=true
         tFlagArg="$OPTARG"
+        ;;
+    u)
+        # update 
+        ;;
+    r)
+        # remover - remove
         ;;
     c)
         # Checar usuario PassWord

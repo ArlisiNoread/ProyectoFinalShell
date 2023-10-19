@@ -2,8 +2,13 @@
 
 #Uso este script para probar libs
 
-export FPATH="$(pwd)/../../lib"
-autoload easyTput
+print $0
+#if [ -z "$main" ]; then
+if [ "$0" =~ ^*test.ksh$ ]; then
+    print "Check"
+    export FPATH="$(pwd)/../../lib"
+    autoload easyTput
+fi
 
 print "Esta es una prueba."
 
@@ -51,5 +56,3 @@ easyTput debil
 print "Ejemplo con texto debil"
 
 easyTput reset
-
-
