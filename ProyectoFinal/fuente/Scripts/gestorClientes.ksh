@@ -67,7 +67,19 @@ while true; do
 				read password_usuario
 				print -n "\t >> Nivel de usuario: "
 				read nivel_usuario			
-				newUsuario "$nombre_usuario" "$password_usuario" "$nivel_usuario"		
+				newUsuario "$nombre_usuario" "$password_usuario" "$nivel_usuario"
+				consultaUsuario="$(getUsuario "$nombre_usuario")"
+				
+				
+				if [[ -z "$consultaUsuario" ]]; then
+					echo "Error al crear usuario."
+				else
+ 					echo "Usuario creado correctamente: "
+
+					echo  "$consultaUsuario" | awk 'BEGIN {FS=":"} {printf "%-15s %-20s %-20s\n", "id usuario", "nombre de usuario", "nivel", "---", "---", "---";
+					       					      printf "%-15s %-20s %-20s\n", "-------", "-------------", "--------";
+										      printf "%-15s %-20s %-20s\n", $1, $2, $4}'			
+				fi		
 				printf "\t ======================\n"
 				printf "\t Presione 1 para salir \n"
 				printf "\t Presione 0 para seguir agregando\n"

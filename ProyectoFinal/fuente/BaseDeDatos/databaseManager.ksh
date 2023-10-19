@@ -27,15 +27,16 @@ function addElement {
     case "$database" in
     usuarios)
         respuesta="$(./crudUsuarios.ksh -a "$objeto")"
-        print "$respuesta"
         if (($? != 0)); then
+            print "$respuesta"
             exit 1
         fi
+
         ;;
     productos)
         respuesta="$(./crudProductos.ksh -a "$objeto")"
-        print "$respuesta"
         if (($? != 0)); then
+            print "$respuesta"
             exit 1
         fi
         ;;
@@ -43,8 +44,8 @@ function addElement {
         print "Test"
 
         respuesta="$(./crudClientes.ksh -a "$objeto")"
-        print "$respuesta"
         if (($? != 0)); then
+            print "$respuesta"
             exit 1
         fi
         ;;
@@ -55,26 +56,25 @@ function addElement {
             exit 1
         fi
         respuesta="$(./crudVentas.ksh -a "$objeto:$(date +"%d-%m-%y/%H-%M-%S")")"
-        print "$respuesta"
         if (($? != 0)); then
+            print "$respuesta"
             exit 1
         fi
         ;;
     ventasproductos)
         respuesta="$(./crudVentasProductos.ksh -a "$objeto")"
-        print "$respuesta"
         if (($? != 0)); then
+            print "$respuesta"
             exit 1
         fi
-        ;;
-    insumos)
-        print "To do"
         ;;
     *)
         print "Opción de base datos inválida."
         exit 1
         ;;
     esac
+    print "$respuesta"
+
 }
 
 function obtenerElemento {
@@ -135,22 +135,34 @@ function obtenerTodosElementos {
     esac
 }
 
-function obtenerTodosElementos {
-    case "$1" in
+function update {
+    query="$1"
+    if [[ ! "$query" =~ ^[^:]+:[^:]+ ]]; then
+        print "Formato de query basedatos:[datos-sustitución]"
+        exit 1
+    fi
+
+    basedatos="$(echo "$query" | awk -F: '{print $1}')"
+    objeto="$(echo "$query" | awk -F: '
+        {
+            i=2
+            limit=NF
+            while(i < limit){
+                printf "%s:", $i
+                i++
+            }
+            printf "%s\n", $i
+        }')"
+
+    case "$basedatos" in
     usuarios)
-        print "$(./crudUsuarios.ksh -t)"
+        print "$(./crudUsuarios.ksh -u "$objeto")"
         ;;
     productos)
-        print "$(./crudProductos.ksh -t)"
+        print "$(./crudProductos.ksh -u "$objeto")"
         ;;
     clientes)
-        print "$(./crudClientes.ksh -t)"
-        ;;
-    ventas)
-        print "$(./crudVentas.ksh -t)"
-        ;;
-    ventasproductos)
-        print "$(./crudVentasProductos.ksh -t)"
+        print "$(./crudClientes.ksh -u "$objeto")"
         ;;
     *)
         print "Opción de base datos inválida."
@@ -245,7 +257,20 @@ function checarSaludGeneral {
 
 }
 
-while getopts a:g:t:l:cu:r: o; do
+function llenadoInicialTesteo {
+    checarSaludGeneral
+
+    # Llenamos usuarios iniciales
+    d="usuarios"
+    addElement "$d:admin:admin:2"
+    addElement "$d:emanuel:123:2"
+    addElement "$d:jorge:256:2"
+    addElement "$d:roberto:789:2"
+
+    # Llenamos los productos
+}
+
+while getopts a:g:t:l:cu:r:x o; do
     case "$o" in
     a)
         # Agregar - add
@@ -269,6 +294,8 @@ while getopts a:g:t:l:cu:r: o; do
         ;;
     u)
         # update
+        uFlag=true
+        uFlagArg="$OPTARG"
         ;;
     r)
         # remover - remove
@@ -281,6 +308,10 @@ while getopts a:g:t:l:cu:r: o; do
         lFlagArg="$OPTARG"
         #usuario:contraseñas
         #regresa usuario:nivel
+        ;;
+    x)
+        # Llenado de arranque testeo
+        xFlag=true
         ;;
     [?])
         print >&2 "Error Usage: $0 [-s] [-d seplist] file ..."
@@ -310,10 +341,14 @@ if [[ $cFlag ]]; then
 fi
 
 if [[ $uFlag ]]; then
-    checarSaludGeneral
+    update "$uFlagArg"
 fi
 
 if [[ $rFlag ]]; then
     #Remove
     remover "$rFlagArg"
+fi
+
+if [[ $xFlag ]]; then
+    llenadoInicialTesteo
 fi
