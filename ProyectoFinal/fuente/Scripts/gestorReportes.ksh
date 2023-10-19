@@ -63,8 +63,10 @@ function generadorReportes {
         fi
     done
 
-    reporte=""
-    
+
+    reporte="Reporte $palabraTiempo entre $backThen y $now\n\n"
+    reporte="Número de ventas: $(print ventasidEnRango | wc -l)"
+
     print "$reporte"
     
     read ok
