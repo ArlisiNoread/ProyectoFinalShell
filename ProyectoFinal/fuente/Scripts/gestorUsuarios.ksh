@@ -8,11 +8,11 @@
 #
 
 if [ "$0" =~ ^*gestorUsuarios.ksh$ ]; then
-    print "AAAAAAAA"
     libreriaDesdeScript=true
     export FPATH="$(pwd)/../../lib"
     autoload easyTput
     autoload bd
+    autoload log
 fi
 
 # Menu principal

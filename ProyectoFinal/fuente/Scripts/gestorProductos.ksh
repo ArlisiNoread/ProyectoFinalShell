@@ -13,6 +13,7 @@ if [ "$0" =~ ^*gestorProductos.ksh$ ]; then
     export FPATH="$(pwd)/../../lib"
     autoload easyTput
     autoload bd
+    autoload log
 fi
 
 while true; do

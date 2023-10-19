@@ -13,6 +13,7 @@ if [ "$0" =~ ^*gestorClientes.ksh$ ]; then
     export FPATH="$(pwd)/../../lib"
     autoload easyTput
     autoload bd
+    autoload log
 fi
 
 function newUsuario {

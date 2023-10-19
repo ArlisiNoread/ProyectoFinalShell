@@ -5,6 +5,7 @@ if [ "$0" =~ ^*login.ksh$ ]; then
     export FPATH="$(pwd)/../../lib"
     autoload easyTput
     autoload bd
+    autoload log
 fi
 
 # Realizamos login
@@ -43,6 +44,7 @@ while ((cntIntentos < 3)); do
         break
     else
         loginFallido=true
+        log "Login fallido de: $usuario."
     fi
     ((cntIntentos++))
     clear
@@ -51,6 +53,9 @@ while ((cntIntentos < 3)); do
 done
 
 if ((cntIntentos >= 3)); then
-    print "Apestas, perdedor."
+    print "Número de intentos agotados."
+    print "This incident will be reported"
+    log "Intentos agotados de: $usuario."
+    sleep 3
     exit
 fi

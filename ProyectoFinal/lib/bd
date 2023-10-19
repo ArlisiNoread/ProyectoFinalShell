@@ -6,7 +6,6 @@ function bd {
     else
         ruta="./BaseDeDatos"
     fi
-    unset libreriaDesdeScript
     respuesta="$(
         cd "$ruta"
         ./databaseManager.ksh $*

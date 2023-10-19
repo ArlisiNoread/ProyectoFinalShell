@@ -14,9 +14,10 @@ readonly nombreArchivo="Clientes.txt"
 
 function agregar {
 	cliente="$1"
-	
+
 	# Se verifican que sea de tipo nombre:celular:dirección
-	if [[ ! "$cliente" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+$"
+	if [[ ! "$cliente" =~ $reg ]]; then
 		print "El producto debe ser del tipo nombre:celular:dirección \n"
 		exit 1
 	fi
@@ -66,35 +67,36 @@ function remover {
 
 function update {
 	cliente="$1"
-	
-	# Se verifican que sea de tipo nombre:celular:dirección
-	if [[ ! "$cliente" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
-		print "El producto debe ser del tipo id:nombre:celular:dirección \n"
+
+	# Se verifican que sea de tipo id:nombre:celular:dirección
+	reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+	if [[ ! "$cliente" =~ $reg ]]; then
+		print "El cliente debe ser del tipo id:nombre:celular:dirección \n"
 		exit 1
 	fi
 
 	respuestaAnalisis=$(checkClienteLine "$cliente")
-
 	if (($? != 0)); then
 		print "$respuestaAnalisis"
 		exit 1
 	fi
 
-	if [[ ! -s "$nombreArchivo" ]]; then
-		idMayor=1
-		printf "1:%s\n" "$cliente" >>"$nombreArchivo"
-	else
-		idMayor="$(sed '/^$/d' "$nombreArchivo" | tail -n 1 | awk -F: '{print $1}')"
-		((idMayor++))
-		printf "\n%d:%s\n" "$idMayor" "$cliente" >>"$nombreArchivo"
-		sed -i '/^$/d' "$nombreArchivo"
-	fi
-	print "$idMayor"
+	idcliente="$(print "$cliente" | awk -F: '{print $1}')"
+	nuevaTabla="$(cat "$nombreArchivo" | awk -F: -v id="$idcliente" -v newval="$cliente" '
+		{
+		if(id == $1)
+			print newval
+		else
+			print $0
+		}
+	')"
+	print "$nuevaTabla" >"$nombreArchivo"
+
 }
 
-
 function checkClienteLine {
-	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+:[^:]+$ "
+	if [[ "$1" =~ $reg ]]; then
 		#Formato id:nombre:celular:direccion
 		id="$(echo "$1" | awk -F: '{print $1}')"
 		celular="$(echo "$1" | awk -F: '{print $3}')"
@@ -111,8 +113,8 @@ function checkClienteLine {
 		print "El id debe ser un número natural."
 		exit 1
 	fi
-
-	if [[ ! "$celular" =~ ^(\+|\d)[0-9]{7,16}$ ]]; then
+	reg="^(\+|\d)[0-9]{7,16}$"
+	if [[ ! "$celular" =~ $reg ]]; then
 		print "El celular debe tener formato de número celular tradicional."
 		exit 1
 	fi
@@ -136,7 +138,8 @@ function checkFile {
 		if [[ -z "$linea" ]]; then
 			continue
 		fi
-		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+		reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+		if [[ ! "$linea" =~ $reg ]]; then
 			errores+="Error en linea $cnt : Un cliente debe ser del tipo id?:nombre:celular:direccion \n"
 			banderaError=true
 		else
@@ -193,7 +196,8 @@ while getopts a:g:tu:r:cn: o; do
 		tFlag=true
 		;;
 	u)
-		print "update"
+		uFlag=true
+		uFlagArg="$OPTARG"
 		;;
 	r)
 		rFlag=true
@@ -225,6 +229,9 @@ if [[ $gFlag ]]; then
 fi
 if [[ $tFlag ]]; then
 	getAllElements
+fi
+if [[ $uFlag ]]; then
+	update "$uFlagArg"
 fi
 if [[ $rFlag ]]; then
 	remover "$rFlagArg"

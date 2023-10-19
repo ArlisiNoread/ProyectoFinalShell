@@ -5,6 +5,14 @@
 # Banderas:
 # -c: checar usuario:password -> -c "usuario:password"
 
+if [ "$0" =~ ^*databaseManager.ksh$ ]; then
+    libreriaDesdeScript=true
+    export FPATH="$(pwd)/../../lib"
+    autoload easyTput
+    autoload bd
+    autoload log
+fi
+
 function cleanup {
     #Se realizan procesos de salida.
     codigoSalida="$?"
@@ -258,16 +266,102 @@ function checarSaludGeneral {
 }
 
 function llenadoInicialTesteo {
+
+    print "Esto reiniciará las bases de datos"
+    printf "¿Seguro? Escribe 'seguro': "
+    read seguro
+    print
+
+    if [ "$seguro" = "seguro" ]; then
+        print "Ok, si estás seguro."
+        print ""
+    else
+        print "Regresa cuando estés seguro."
+        exit 1
+    fi
+
+    print "Reiniciando bases de datos."
+    rm *.txt
     checarSaludGeneral
+
+    print "Insertando elementos."
 
     # Llenamos usuarios iniciales
     d="usuarios"
-    addElement "$d:admin:admin:2"
-    addElement "$d:emanuel:123:2"
-    addElement "$d:jorge:256:2"
-    addElement "$d:roberto:789:2"
+    usuarios="admin:admin:2\n"
+    usuarios+="emanuel:123:2\n"
+    usuarios+="jorge:256:2\n"
+    usuarios+="roberto:789:2\n"
+    usuarios+="maria:jose:1\n"
 
-    # Llenamos los productos
+    print $usuarios | while read line; do
+        if [ -z "$line" ]; then
+            continue
+        fi
+        r=$(addElement "$d:$line")
+        print "Agregado en $d: $line"
+    done
+
+    d="clientes"
+    clientes="Alfredo Adame:55575859:Cerro del sombrero 431-3, Col. Pedregal.\n"
+    clientes+="Yordi Rosado:55646968:Quiubole 1567, Col. Rollo.\n"
+    clientes+="Santa Catarina De la pasión de nuestro señor:51777777:Convento de la sanación ramificada.\n"
+    clientes+="Alesteir Crowley:01800666666:Camino al infierno 1408\n"
+    clientes+="Dominero Pizza:018005522222:En tu esquina favorita\n"
+
+    print $clientes | while read line; do
+        if [ -z "$line" ]; then
+            continue
+        fi
+        r=$(addElement "$d:$line")
+        print "Agregado en $d: $line"
+    done
+
+    d="productos"
+    productos="Acondicionador sólido, lavanda, 140g:129.0:1000\n"
+    productos+="Acondicionador sólido, lavanda, 60g:74.90:1000\n"
+    productos+="Acondicionador sólido, menta, 140g:129.0:500\n"
+    productos+="Acondicionador sólido, eucalipto, 60g:74.90:500\n"
+    productos+="Tableta pasta dental, menta, 25g:98.70:500\n"
+    productos+="Tableta pasta dental, con fluoruro, 25g:98.70:500\n"
+
+    print $productos | while read line; do
+        if [ -z "$line" ]; then
+            continue
+        fi
+        r=$(addElement "$d:$line")
+        print "Agregado en $d: $line"
+    done
+
+    d="ventas"
+    ((azarVentas = $RANDOM % 10 + 5))
+    noClientes="$(obtenerTodosElementos "clientes" | wc -l)"
+    cnt=0
+    while ((cnt < azarVentas)); do
+        ((randomId = 1 + $RANDOM % (noClientes - 1)))
+        r=$(addElement "$d:$randomId")
+        print "Agregado en $d: id-venta $r"
+        ((cnt++))
+    done
+
+    d="ventasproductos"
+    noProductos="$(obtenerTodosElementos "productos" | wc -l)"
+    cnt=1
+    ((noRandProductos = $RANDOM % 10 + 5))
+    while ((cnt <= azarVentas)); do
+        cntProducto=0
+        while ((cntProducto < noRandProductos)); do
+            ((cantidad = $RANDOM % 9 + 1))
+            ((randomId = 1 + $RANDOM % (noProductos - 1)))
+            r=$(addElement "$d:$cnt:$randomId:$cantidad")
+            print "Agregado en $d: id-venta $r"
+            ((cntProducto++))
+        done
+        ((cnt++))
+    done
+
+    print "Base de datos llenada correctamente."
+
 }
 
 while getopts a:g:t:l:cu:r:x o; do

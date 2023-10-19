@@ -15,7 +15,8 @@ readonly nombreArchivo="Usuarios.txt"
 function agregar {
 	usuarioObject="$1"
 
-	if [[ ! "$usuarioObject" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+$"
+	if [[ ! "$usuarioObject" =~ $reg ]]; then
 		print "El Usuario debe ser del tipo usuario:password:nivel \n"
 		exit 1
 	fi
@@ -72,11 +73,13 @@ function remover {
 }
 
 function checkUsuarioLine {
-	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+	reg2="^[^:]+:[^:]+:[^:]+$"
+	if [[ "$1" =~ $reg ]]; then
 		#Formato id:usuario:password:nivel
 		id="$(echo "$1" | awk -F: '{print $1}')"
 		nivel="$(echo "$1" | awk -F: '{print $4}')"
-	elif [[ "$1" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+	elif [[ "$1" =~ $reg2 ]]; then
 		#Formato usuario:password:nivel
 		id=0
 		nivel="$(echo "$1" | awk -F: '{print $3}')"
@@ -115,7 +118,8 @@ function checkFile {
 		if [[ -z "$linea" ]]; then
 			continue
 		fi
-		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+		reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+		if [[ ! "$linea" =~ $reg ]]; then
 			errores+="Error en linea $cnt : Un usuario debe ser del tipo id?:usuario:password:nivel \n"
 			banderaError=true
 		else

@@ -15,7 +15,8 @@ readonly nombreArchivo="Productos.txt"
 function agregar {
 	producto="$1"
 
-	if [[ ! "$producto" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+$"
+	if [[ ! "$producto" =~ $reg ]]; then
 		print "El producto debe ser del tipo nombre:costo:cantidadEnAlmacen \n"
 		exit 1
 	fi
@@ -64,8 +65,37 @@ function remover {
 	sed -i "/^$idProducto/d" "$nombreArchivo"
 }
 
+function update {
+	producto="$1"
+
+	# Se verifican que sea de tipo id:nombre:costo:cantidadEnAlmacen
+	reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+	if [[ ! "$producto" =~ $reg ]]; then
+		print "El producto debe ser del tipo id:nombre:costo:cantidadEnAlmacen"
+		exit 1
+	fi
+
+	respuestaAnalisis=$(checkProductoLine "$producto")
+	if (($? != 0)); then
+		print "$respuestaAnalisis"
+		exit 1
+	fi
+
+	idProducto="$(print "$producto" | awk -F: '{print $1}')"
+	nuevaTabla="$(cat "$nombreArchivo" | awk -F: -v id="$idProducto" -v newval="$producto" '
+		{
+		if(id == $1)
+			print newval
+		else
+			print $0
+		}
+	')" 
+	print "$nuevaTabla" >"$nombreArchivo"
+}
+
 function checkProductoLine {
-	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+	if [[ "$1" =~ $reg ]]; then
 		#Formato id:nombre:costo:cantidadEnAlmacen
 		id="$(echo "$1" | awk -F: '{print $1}')"
 		costo="$(echo "$1" | awk -F: '{print $3}')"
@@ -114,7 +144,8 @@ function checkFile {
 		if [[ -z "$linea" ]]; then
 			continue
 		fi
-		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+		reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+		if [[ ! "$linea" =~ $reg ]]; then
 			errores+="Error en linea $cnt : Un producto debe ser del tipo id?:nombre:costo:cantidadEnAlmacen \n"
 			banderaError=true
 		else
@@ -171,7 +202,8 @@ while getopts a:g:tu:r:cn: o; do
 		tFlag=true
 		;;
 	u)
-		print "update"
+		uFlag=true
+		uFlagArg="$OPTARG"
 		;;
 	r)
 		rFlag=true
@@ -203,6 +235,9 @@ if [[ $gFlag ]]; then
 fi
 if [[ $tFlag ]]; then
 	getAllElements
+fi
+if [[ $uFlag ]]; then
+	update "$uFlagArg"
 fi
 if [[ $rFlag ]]; then
 	remover "$rFlagArg"

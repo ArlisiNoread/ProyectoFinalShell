@@ -16,7 +16,8 @@ function agregar {
 	ventaProducto="$1"
 
 	# Se verifican que sea de tipo fk-Venta:fk-Producto:cantidad
-	if [[ ! "$ventaProducto" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+$"
+	if [[ ! "$ventaProducto" =~ $reg ]]; then
 		print "La ventaProducto debe ser del tipo fk-Venta:fk-Producto:cantidad\n"
 		exit 1
 	fi
@@ -101,7 +102,9 @@ function removerTodosDeUnaVenta {
 
 function checkVentaProductoLine {
 
-	if [[ "$1" =~ ^[^:]+:[^:]+:[^:-]+-[^:-]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:-]+-[^:-]+:[^:]+$"
+	reg2="^[^:]+:[^:]+:[^:]+$"
+	if [[ "$1" =~ $reg ]]; then
 		#Formato id:fk-Venta:nombreProducto-costo:cantidad
 		id="$(echo "$1" | awk -F: '{print $1}')"
 		fkVenta="$(echo "$1" | awk -F: '{print $2}')"
@@ -126,7 +129,7 @@ function checkVentaProductoLine {
 			exit 1
 		fi
 		exit
-	elif [[ "$1" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+	elif [[ "$1" =~ $reg2 ]]; then
 		#Formato fk-Venta:fk-Producto:cantidad
 		id=0
 		fkVenta="$(echo "$1" | awk -F: '{print $1}')"
@@ -174,7 +177,8 @@ function checkFile {
 		if [[ -z "$linea" ]]; then
 			continue
 		fi
-		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:-]+-[^:-]+:[^:]+$ ]]; then
+		reg="^[^:]+:[^:]+:[^:-]+-[^:-]+:[^:]+$"
+		if [[ ! "$linea" =~ $reg ]]; then
 			errores+="Error en linea $cnt : Una ventaProducto debe ser del tipo id:fk-venta:nombreProducto-costo:cantidad\n"
 			banderaError=true
 		else
