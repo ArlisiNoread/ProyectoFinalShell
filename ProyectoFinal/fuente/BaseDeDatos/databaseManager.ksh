@@ -142,7 +142,15 @@ function checarUsuarioPassword {
     fi
 }
 
-while getopts a:g:t:l:c:u:r: o; do
+function checarSaludGeneral {
+    ./crudClientes.ksh -c
+    ./crudProductos.ksh -c
+    ./crudUsuarios.ksh -c
+    ./crudVentas.ksh -c
+    ./crudVentasProductos.ksh -c
+}
+
+while getopts a:g:t:l:cu:r: o; do
     case "$o" in
     a)
         # Agregar - add
@@ -159,6 +167,10 @@ while getopts a:g:t:l:c:u:r: o; do
         # Obtener todos
         tFlag=true
         tFlagArg="$OPTARG"
+        ;;
+    c)
+        # Checar salud de todos los archivos
+        cFlag=true
         ;;
     u)
         # update 
@@ -194,3 +206,8 @@ fi
 if [[ $tFlag ]]; then
     obtenerTodosElementos "$tFlagArg"
 fi
+
+if [[ $cFlag ]]; then
+    checarSaludGeneral
+fi
+
