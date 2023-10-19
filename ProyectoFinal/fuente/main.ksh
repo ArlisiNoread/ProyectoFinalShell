@@ -4,7 +4,6 @@ function cleanup {
     #Se realizan procesos de salida.
     clear
     codigoSalida="$?"
-    print "Procesos de salida por definir"
     exit "$codigoSalida"
 }
 

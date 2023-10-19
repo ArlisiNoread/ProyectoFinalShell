@@ -14,6 +14,7 @@ if [ "$0" =~ ^*gestorUsuarios.ksh$ ]; then
     autoload bd
 fi
 
+bd -t clientes
 
 # Menu principal
 

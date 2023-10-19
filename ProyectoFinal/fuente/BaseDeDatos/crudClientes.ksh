@@ -80,16 +80,11 @@ function update {
 		exit 1
 	fi
 
-	if [[ ! -s "$nombreArchivo" ]]; then
-		idMayor=1
-		printf "1:%s\n" "$cliente" >>"$nombreArchivo"
-	else
-		idMayor="$(sed '/^$/d' "$nombreArchivo" | tail -n 1 | awk -F: '{print $1}')"
-		((idMayor++))
-		printf "\n%d:%s\n" "$idMayor" "$cliente" >>"$nombreArchivo"
-		sed -i '/^$/d' "$nombreArchivo"
-	fi
-	print "$idMayor"
+	idcliente="$(print cliente | awk -F: '{print $1}')"
+
+	sed "s/^$idcliente:[^:]+:[^:]+:[^:]+$/$cliente/"
+
+	print "$idCliente"
 }
 
 
