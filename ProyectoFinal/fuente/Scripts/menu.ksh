@@ -46,20 +46,20 @@ while true; do
 
 	case $opcion in
 	1)
-		source ./gestorProductos.ksh
+		source ./Scripts/gestorProductos.ksh
 		;;
 	2)
-		source ./gestorClientes.ksh
+		source ./Scripts/gestorClientes.ksh
 		;;
 	3)
-		source ./gestorVentas.ksh
+		source ./Scripts/gestorVentas.ksh
 		;;
 	4)
-		source ./gestorVentasProductos.ksh
+		source ./Scripts/gestorVentasProductos.ksh
 		;;
 	5)
-		cd Scripts
-		source ./gestorUsuarios.ksh
+
+		source ./Scripts/gestorUsuarios.ksh
 		;;
 	6)
 		clear

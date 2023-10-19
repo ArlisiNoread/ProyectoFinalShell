@@ -14,10 +14,9 @@ if [ "$0" =~ ^*gestorUsuarios.ksh$ ]; then
     autoload bd
 fi
 
-bd -t clientes
+
 
 # Menu principal
-
 
 while true; do
 	easyTput colortexto verde
@@ -25,7 +24,7 @@ while true; do
 	easyTput reset
 	easyTput subrayado
 	printf "\n\t                 Gestor de usuarios  		 \n"
-	easyTput reset
+	easyTput resets
 	easyTput colortexto verde
 	printf "\n\n\t=================================================\n"
 	easyTput reset
@@ -52,7 +51,7 @@ while true; do
 	                read nivel
 			#cd ../BaseDeDatos/
 			#./databaseManager.ksh -a usuarios:$nombre:$password:$nivel
-			bd -a usuarios:$nombre:$password:$nivel		
+			#bd -a usuarios:$nombre:$password:$nivel		
 			easyTput colortexto rojo
 		        print "\tUsuario agregado"
 			easyTput reset
