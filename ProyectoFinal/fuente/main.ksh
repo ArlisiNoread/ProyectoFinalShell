@@ -10,7 +10,7 @@ bd -c
 
 # Ejecución de Login
 
-#source ./Scripts/login.ksh
+source ./Scripts/login.ksh
 
 if [ ! -z "$usuario" ];then
 # Si llegamos aquí usuario usuario:nivel ya existe
