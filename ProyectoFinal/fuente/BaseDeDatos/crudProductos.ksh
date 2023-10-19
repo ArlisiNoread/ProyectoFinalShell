@@ -15,7 +15,8 @@ readonly nombreArchivo="Productos.txt"
 function agregar {
 	producto="$1"
 
-	if [[ ! "$producto" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+$"
+	if [[ ! "$producto" =~ $reg ]]; then
 		print "El producto debe ser del tipo nombre:costo:cantidadEnAlmacen \n"
 		exit 1
 	fi
@@ -68,7 +69,8 @@ function update {
 	producto="$1"
 
 	# Se verifican que sea de tipo id:nombre:costo:cantidadEnAlmacen
-	if [[ ! "$producto" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+	if [[ ! "$producto" =~ $reg ]]; then
 		print "El producto debe ser del tipo id:nombre:costo:cantidadEnAlmacen"
 		exit 1
 	fi
@@ -92,7 +94,8 @@ function update {
 }
 
 function checkProductoLine {
-	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+	if [[ "$1" =~ $reg ]]; then
 		#Formato id:nombre:costo:cantidadEnAlmacen
 		id="$(echo "$1" | awk -F: '{print $1}')"
 		costo="$(echo "$1" | awk -F: '{print $3}')"
@@ -141,7 +144,8 @@ function checkFile {
 		if [[ -z "$linea" ]]; then
 			continue
 		fi
-		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+		reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+		if [[ ! "$linea" =~ $reg ]]; then
 			errores+="Error en linea $cnt : Un producto debe ser del tipo id?:nombre:costo:cantidadEnAlmacen \n"
 			banderaError=true
 		else

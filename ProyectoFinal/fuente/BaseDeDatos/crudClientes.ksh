@@ -16,7 +16,8 @@ function agregar {
 	cliente="$1"
 
 	# Se verifican que sea de tipo nombre:celular:dirección
-	if [[ ! "$cliente" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+$"
+	if [[ ! "$cliente" =~ $reg ]]; then
 		print "El producto debe ser del tipo nombre:celular:dirección \n"
 		exit 1
 	fi
@@ -68,7 +69,8 @@ function update {
 	cliente="$1"
 
 	# Se verifican que sea de tipo id:nombre:celular:dirección
-	if [[ ! "$cliente" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+	if [[ ! "$cliente" =~ $reg ]]; then
 		print "El cliente debe ser del tipo id:nombre:celular:dirección \n"
 		exit 1
 	fi
@@ -93,7 +95,8 @@ function update {
 }
 
 function checkClienteLine {
-	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+:[^:]+$ "
+	if [[ "$1" =~ $reg ]]; then
 		#Formato id:nombre:celular:direccion
 		id="$(echo "$1" | awk -F: '{print $1}')"
 		celular="$(echo "$1" | awk -F: '{print $3}')"
@@ -110,8 +113,8 @@ function checkClienteLine {
 		print "El id debe ser un número natural."
 		exit 1
 	fi
-
-	if [[ ! "$celular" =~ ^(\+|\d)[0-9]{7,16}$ ]]; then
+	reg="^(\+|\d)[0-9]{7,16}$"
+	if [[ ! "$celular" =~ $reg ]]; then
 		print "El celular debe tener formato de número celular tradicional."
 		exit 1
 	fi
@@ -135,7 +138,8 @@ function checkFile {
 		if [[ -z "$linea" ]]; then
 			continue
 		fi
-		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+		reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
+		if [[ ! "$linea" =~ $reg ]]; then
 			errores+="Error en linea $cnt : Un cliente debe ser del tipo id?:nombre:celular:direccion \n"
 			banderaError=true
 		else

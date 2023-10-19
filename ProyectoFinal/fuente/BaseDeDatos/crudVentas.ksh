@@ -16,7 +16,8 @@ function agregar {
 	venta="$1"
 
 	# Se verifican que sea de tipo fk-idCliente:dateTime["%d-%m-%y/%H-%M-%S"]
-	if [[ ! "$venta" =~ ^[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+$"
+	if [[ ! "$venta" =~ $reg ]]; then
 		# Para obtener las ventas con este formato se usa 'date +"%d-%m-%y/%H-%M-%S"'
 		print "La Ventas debe ser del tipo fk-Cliente:dateTime["%d-%m-%y/%H-%M-%S"]\n"
 		exit 1
@@ -77,7 +78,8 @@ function remover {
 }
 
 function checkVentaLine {
-	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+	reg="^[^:]+:[^:]+:[^:]+$"
+	if [[ "$1" =~ $reg ]]; then
 		#Formato id:fk-cliente:dateTime["%d-%m-%Y/%H-%M-%S"]
 		id="$(echo "$1" | awk -F: '{print $1}')"
 		fkCliente="$(echo "$1" | awk -F: '{print $2}')"
@@ -126,7 +128,8 @@ function checkFile {
 		if [[ -z "$linea" ]]; then
 			continue
 		fi
-		if [[ ! "$linea" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
+		reg="^[^:]+:[^:]+:[^:]+$"
+		if [[ ! "$linea" =~ $reg ]]; then
 			errores+="Error en linea $cnt : Una venta debe ser del tipo id:fk-cliente:dateTime[día-mes-año/hora-minuto-segundo]\n"
 			banderaError=true
 		else
