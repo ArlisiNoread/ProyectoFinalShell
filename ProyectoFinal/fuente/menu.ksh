@@ -7,8 +7,9 @@ clear
 #     Nomas ando probando las librerías        #
 ################################################
 export FPATH="$(pwd)/../lib"
-autoload imprimirHola
-#imprimirHola
+autoload easyTput
+
+
 ################################################
 # A no ma si funciona                          #
 # Reglas para las librerías:                   #
