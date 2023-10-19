@@ -14,12 +14,19 @@ while ((cntIntentos < 3)); do
     read contrasena #La pass está escondida
     print ""
     stty "$old" # Lo regresamos a como estaba.
-    checkUser="$(bd -c "$usuario:$contrasena")"
+    print "$usuario-$contrasena"
+    if [[ ! -z "$usuario" && ! -z "$contrasena" ]]; then
+        print "entramos"
+        checkUser="$(bd -c "$usuario:$contrasena")"
+    fi
+    print "$checkUser"
     if [ ! -z "$checkUser" ]; then
+        print "############# $chekUser"
         usuario="$checkUser"
         break
     fi
     ((cntIntentos++))
+    unset usuario
     unset contrasena
 done
 
