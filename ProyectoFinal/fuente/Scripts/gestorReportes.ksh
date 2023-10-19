@@ -63,13 +63,47 @@ function generadorReportes {
         fi
     done
 
-
     reporte="Reporte $palabraTiempo entre $backThen y $now\n\n"
-    reporte="Número de ventas: $(print ventasidEnRango | wc -l)"
+    reporte+="\tNúmero de ventas: $(print "$ventasidEnRango" | wc -l)\n"
+    reporte+="\tGanancias de productos vendidos: $(print "$ventasProductosEnRango" | awk -F: 'BEGIN{cnt=0} {cnt+=$2} END{print cnt}')"
+    error=""
+    while true; do
+        clear
+        print "$reporte"
+        print ""
+        if [ -z "$error" ]; then
+            print ""
+        else
+            easyTput colortexto rojo
+            print "Opción incorrecta"
+            easyTput reset
+        fi
 
-    print "$reporte"
-    
-    read ok
+        print ""
+        easyTput negritas
+        easyTput subrayado
+        printf "¿Desea mandar el reporte a un correo? (s/n): "
+        easyTput reset
+        read opcion1
+
+        case "$opcion1" in
+        s)
+            printf "Ingrese el email: "; read email
+            print ""
+            printf "Ingrese el asunto: "; read asunto
+            print ""
+
+            print "$reporte" | mail -s "$asunto" "$email"
+            print "Correo enviado"
+            sleep 2
+            break
+            ;;
+        n) break ;;
+        *) error=true ;;
+        esac
+
+    done
+
 }
 
 function tituloReportes {
