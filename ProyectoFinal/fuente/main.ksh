@@ -2,9 +2,10 @@
 
 function cleanup {
     #Se realizan procesos de salida.
-    salidaConError= "$?"
+    clear
+    codigoSalida="$?"
     print "Procesos de salida por definir"
-    exit 1
+    exit "$codigoSalida"
 }
 
 #Traps
