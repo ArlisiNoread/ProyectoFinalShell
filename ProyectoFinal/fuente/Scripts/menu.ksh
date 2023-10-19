@@ -20,7 +20,8 @@ mostrarMenu() {
 	if ((nivelUsuario == 2)); then
 		echo 3. Gestor Producto
 		echo 4. Gestor de Usuarios
-		echo 5. Salir
+		echo 5. Gestor de Reportes
+		echo 6. Salir
 	else
 		echo 3. Salir
 	fi
@@ -50,6 +51,9 @@ while true; do
 			source ./Scripts/gestorUsuarios.ksh
 			;;
 		5)
+			source ./Scripts/gestorReportes.ksh
+			;;
+		6)
 			clear
 			exit
 			;;
