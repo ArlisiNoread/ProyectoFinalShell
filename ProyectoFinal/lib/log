@@ -1,0 +1,13 @@
+#!/bin/ksh
+
+function log {
+    if [ ! -z "$libreriaDesdeScript" ]; then
+        ruta="../"
+    else
+        ruta="./"
+    fi
+    if [ ! -z "$1" ]; then
+        print "$(date +"%d-%m-%y/%H-%M-%S"):$1" >> "$ruta/logs.txt"
+    fi
+    
+}
