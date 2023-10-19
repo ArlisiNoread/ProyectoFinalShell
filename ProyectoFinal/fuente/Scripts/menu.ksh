@@ -64,6 +64,7 @@ while true; do
 		source ./gestorVentasProductos.ksh
 		;;
 	5)
+		cd Scripts
 		source ./gestorUsuarios.ksh
 		;;
 	6)
