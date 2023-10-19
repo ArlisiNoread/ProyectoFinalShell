@@ -56,5 +56,6 @@ if ((cntIntentos >= 3)); then
     print "Número de intentos agotados."
     print "This incident will be reported"
     log "Intentos agotados de: $usuario."
+    sleep 3
     exit
 fi
