@@ -17,7 +17,6 @@ fi
 
 # Menu principal
 
-
 while true; do
 	easyTput colortexto verde
 	printf "\n\n\t===================  MU & ME ====================\n"
@@ -49,21 +48,40 @@ while true; do
 	                read password
 	                print -n "\t Nivel: "
 	                read nivel
-			#cd ../BaseDeDatos/
-			#./databaseManager.ksh -a usuarios:$nombre:$password:$nivel
-			bd -a usuarios:$nombre:$password:$nivel		
+			cd ../BaseDeDatos/
+			./databaseManager.ksh -a usuarios:$nombre:$password:$nivel
+			#bd -a usuarios:$nombre:$password:$nivel		
 			easyTput colortexto rojo
-		        print "\tUsuario agregado"
+		        print "\t Usuario agregado"
 			easyTput reset
 		   ;;
 	  	2)
+			print -n "\t Ingresa el nombre del usuario a buscar: "
+			read snombre
+                        cd ../BaseDeDatos/
+                        ./databaseManager.ksh -g usuarios:$snombre
+			#bd -a usuarios:$nombre:$password:$nivel		
 		   ;;
 	  	3)
+			print -n "\t Todos los usuarios\n"
+			cd ../BaseDeDatos/
+			./databaseManager.ksh -t usuarios
+			#bd -t usuarios
 		   ;;
 		4)
+			print -n "\t Ingresa el nombre del usuario a borrar: "
+			read rnombre
+			cd ../BaseDeDatos/
+			./databaseManager.ksh -r usuarios:$rnombre
+			#bd -r usuarios:$rnombre
+	                easyTput colortexto rojo
+			print "\t Usuario borrado"
+                        easyTput reset		
 		   ;;
-		5)
+
+		5) 
 			source ./menu.ksh
+			break
 			;;
 	   	*)
 		   	echo "Opción no válida. Intente de nuevo."
@@ -71,5 +89,4 @@ while true; do
 		   ;;
 	esac
 done
-
 
