@@ -40,11 +40,11 @@ while true; do
 	case $opcion in
 		1)
 			print -n "\t Nombre: "
-		        read nombre
-	                print -n "\t Contraseña: "
-	                read password
-	                print -n "\t Nivel: "
-	                read nivel
+            read nombre
+            print -n "\t Contraseña: "
+            read password
+            print -n "\t Nivel: "
+            read nivel
 			
 			respuesta="$(bd -a "usuarios:$nombre:$password:$nivel")"
 			

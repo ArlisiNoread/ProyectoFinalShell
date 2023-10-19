@@ -49,7 +49,7 @@ function addElement {
         fi
         ;;
     clientes)
-        print "Test"
+        #print "Test"
 
         respuesta="$(./crudClientes.ksh -a "$objeto")"
         if (($? != 0)); then
