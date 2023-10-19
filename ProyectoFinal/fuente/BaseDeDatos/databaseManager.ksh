@@ -63,7 +63,7 @@ function addElement {
             print "El id del cliente debe ser un número natural."
             exit 1
         fi
-        respuesta="$(./crudVentas.ksh -a "$objeto:$(date +"%d-%m-%y/%H-%M-%S")")"
+        respuesta="$(./crudVentas.ksh -a "$objeto:$(date +"%d-%m-%Y/%H-%M-%S")")"
         if (($? != 0)); then
             print "$respuesta"
             exit 1
