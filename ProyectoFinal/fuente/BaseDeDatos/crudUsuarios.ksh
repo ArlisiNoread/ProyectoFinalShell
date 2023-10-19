@@ -90,10 +90,10 @@ function checkUsuarioLine {
 }
 
 function checkFile {
-	./checkeoGeneralDeArchivo.ksh "$nombreArchivo"
+
 	respuesta="$(./checkeoGeneralDeArchivo.ksh "$nombreArchivo")"
-	if (($? != 0))  ; then
-		print "$Respuesta"
+	if (( $? != 0)); then
+		print "$respuesta"
 		exit 1
 	fi
 
@@ -169,6 +169,7 @@ function checkFile {
 	if $banderaError; then
 		print "Archivo $nombreArchivo corrupto."
 		print "$errores"
+		exit 1
 	fi
 
 }
@@ -193,6 +194,7 @@ while getopts a:g:tu:r:cn: o; do
 		print "remove"
 		;;
 	c)
+
 		cFlag=true
 		;;
 	n)
@@ -208,6 +210,7 @@ done
 shift $OPTIND-1
 
 if [[ $cFlag ]]; then
+
 	checkFile
 fi
 if [[ $aFlag ]]; then

@@ -111,7 +111,7 @@ function checkVentaLine {
 function checkFile {
 	respuesta="$(./checkeoGeneralDeArchivo.ksh "$nombreArchivo")"
 	if (($? != 0)); then
-		print "$Respuesta"
+		print "$respuesta"
 		exit 1
 	fi
 
@@ -164,6 +164,7 @@ function checkFile {
 	if $banderaError; then
 		print "Archivo $nombreArchivo corrupto."
 		print "$errores"
+		exit 1
 	fi
 
 }

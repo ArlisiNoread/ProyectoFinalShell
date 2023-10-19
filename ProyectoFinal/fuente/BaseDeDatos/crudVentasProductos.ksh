@@ -212,6 +212,7 @@ function checkFile {
 	if $banderaError; then
 		print "Archivo $nombreArchivo corrupto."
 		print "$errores"
+		exit 1
 	fi
 
 }

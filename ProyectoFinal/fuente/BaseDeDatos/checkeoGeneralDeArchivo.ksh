@@ -3,6 +3,7 @@
 #
 #
 
+
 if [[ -z $1 ]]; then
     print "Ingrese archivo a analizar."
     exit 1

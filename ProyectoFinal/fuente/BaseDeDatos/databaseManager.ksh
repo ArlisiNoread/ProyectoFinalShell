@@ -143,11 +143,28 @@ function checarUsuarioPassword {
 }
 
 function checarSaludGeneral {
-    ./crudClientes.ksh -c
-    ./crudProductos.ksh -c
-    ./crudUsuarios.ksh -c
-    ./crudVentas.ksh -c
-    ./crudVentasProductos.ksh -c
+    errorRespuesta=""
+    errorRespuesta+="$(./crudClientes.ksh -c)"
+    if (($? != 0)); then
+        error=true
+    fi
+    errorRespuesta+="$(./crudProductos.ksh -c)"
+    if (($? != 0)); then
+        error=true
+    fi
+    errorRespuesta+="$(./crudUsuarios.ksh -c)"
+    if (($? != 0)); then
+        error=true
+    fi
+    errorRespuesta+="$(./crudVentasProductos.ksh -c)"
+    if (($? != 0)); then
+        error=true
+    fi
+    if [ ! -z "$error" ];then
+        print "$errorRespuesta"
+        return 1
+    fi
+
 }
 
 while getopts a:g:t:l:cu:r: o; do
@@ -173,7 +190,7 @@ while getopts a:g:t:l:cu:r: o; do
         cFlag=true
         ;;
     u)
-        # update 
+        # update
         ;;
     r)
         # remover - remove
@@ -210,4 +227,3 @@ fi
 if [[ $cFlag ]]; then
     checarSaludGeneral
 fi
-
