@@ -257,7 +257,20 @@ function checarSaludGeneral {
 
 }
 
-while getopts a:g:t:l:cu:r: o; do
+function llenadoInicialTesteo {
+    checarSaludGeneral
+
+    # Llenamos usuarios iniciales
+    d="usuarios"
+    addElement "$d:admin:admin:2"
+    addElement "$d:emanuel:123:2"
+    addElement "$d:jorge:256:2"
+    addElement "$d:roberto:789:2"
+
+    # Llenamos los productos
+}
+
+while getopts a:g:t:l:cu:r:x o; do
     case "$o" in
     a)
         # Agregar - add
@@ -296,6 +309,10 @@ while getopts a:g:t:l:cu:r: o; do
         #usuario:contraseñas
         #regresa usuario:nivel
         ;;
+    x)
+        # Llenado de arranque testeo
+        xFlag=true
+        ;;
     [?])
         print >&2 "Error Usage: $0 [-s] [-d seplist] file ..."
         exit 1
@@ -330,4 +347,8 @@ fi
 if [[ $rFlag ]]; then
     #Remove
     remover "$rFlagArg"
+fi
+
+if [[ $xFlag ]]; then
+    llenadoInicialTesteo
 fi
