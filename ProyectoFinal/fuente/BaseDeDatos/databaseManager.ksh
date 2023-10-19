@@ -5,6 +5,16 @@
 # Banderas:
 # -c: checar usuario:password -> -c "usuario:password"
 
+function cleanup {
+    #Se realizan procesos de salida.
+    codigoSalida="$?"
+    exit "$codigoSalida"
+}
+
+#Traps
+trap 'cleanup' EXIT
+trap 'cleanup' INT HUP QUIT TERM ALRM USR1
+
 function addElement {
     addQuery="$1"
     if [[ ! "$addQuery" =~ ^[^:]+:.*$ ]]; then
@@ -30,6 +40,8 @@ function addElement {
         fi
         ;;
     clientes)
+        print "Test"
+
         respuesta="$(./crudClientes.ksh -a "$objeto")"
         print "$respuesta"
         if (($? != 0)); then
@@ -58,7 +70,7 @@ function addElement {
     insumos)
         print "To do"
         ;;
-    [?])
+    *)
         print "Opción de base datos inválida."
         exit 1
         ;;
@@ -85,7 +97,13 @@ function obtenerElemento {
     clientes)
         print "$(./crudClientes.ksh -g "$idElemento")"
         ;;
-    [?])
+    ventas)
+        print "$(./crudVentas.ksh -g "$idElemento")"
+        ;;
+    ventasproductos)
+        print "$(./crudVentasProductos.ksh -g "$idElemento")"
+        ;;
+    *)
         print "Opción de base datos inválida."
         exit 1
         ;;
@@ -104,7 +122,67 @@ function obtenerTodosElementos {
     clientes)
         print "$(./crudClientes.ksh -t)"
         ;;
-    [?])
+    ventas)
+        print "$(./crudVentas.ksh -t)"
+        ;;
+    ventasproductos)
+        print "$(./crudVentasProductos.ksh -t)"
+        ;;
+    *)
+        print "Opción de base datos inválida."
+        exit 1
+        ;;
+    esac
+}
+
+function obtenerTodosElementos {
+    case "$1" in
+    usuarios)
+        print "$(./crudUsuarios.ksh -t)"
+        ;;
+    productos)
+        print "$(./crudProductos.ksh -t)"
+        ;;
+    clientes)
+        print "$(./crudClientes.ksh -t)"
+        ;;
+    ventas)
+        print "$(./crudVentas.ksh -t)"
+        ;;
+    ventasproductos)
+        print "$(./crudVentasProductos.ksh -t)"
+        ;;
+    *)
+        print "Opción de base datos inválida."
+        exit 1
+        ;;
+    esac
+}
+
+function remover {
+    query="$1"
+    if [[ ! "$query" =~ ^[^:]+:[^:]+ ]]; then
+        print "Formato de query basedatos:llave"
+        exit 1
+    fi
+
+    basedatos="$(echo "$query" | awk -F: '{print $1}')"
+    idElemento="$(echo "$query" | awk -F: '{print $2}')"
+
+    case "$basedatos" in
+    usuarios)
+        print "$(./crudUsuarios.ksh -r "$idElemento")"
+        ;;
+    productos)
+        print "$(./crudProductos.ksh -r "$idElemento")"
+        ;;
+    clientes)
+        print "$(./crudClientes.ksh -r "$idElemento")"
+        ;;
+    ventas)
+        print "$(./crudVentas.ksh -r "$idElemento")"
+        ;;
+    *)
         print "Opción de base datos inválida."
         exit 1
         ;;
@@ -160,7 +238,7 @@ function checarSaludGeneral {
     if (($? != 0)); then
         error=true
     fi
-    if [ ! -z "$error" ];then
+    if [ ! -z "$error" ]; then
         print "$errorRespuesta"
         return 1
     fi
@@ -194,6 +272,8 @@ while getopts a:g:t:l:cu:r: o; do
         ;;
     r)
         # remover - remove
+        rFlag=true
+        rFlagArg="$OPTARG"
         ;;
     l)
         # Checar usuario PassWord
@@ -214,6 +294,7 @@ if [[ $lFlag ]]; then
     # login
     checarUsuarioPassword "$lFlagArg"
 fi
+
 if [[ $aFlag ]]; then
     addElement "$aFlagArg"
 fi
@@ -226,4 +307,13 @@ fi
 
 if [[ $cFlag ]]; then
     checarSaludGeneral
+fi
+
+if [[ $uFlag ]]; then
+    checarSaludGeneral
+fi
+
+if [[ $rFlag ]]; then
+    #Remove
+    remover "$rFlagArg"
 fi

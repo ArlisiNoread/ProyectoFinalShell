@@ -64,6 +64,13 @@ function getAllElements {
 	print "$(cat "$nombreArchivo")"
 }
 
+function remover {
+
+	usuario="$1"
+	print "Usuario:$usuario"
+	sed -i "/^[^:]:$usuario:/d" "$nombreArchivo"
+}
+
 function checkUsuarioLine {
 	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
 		#Formato id:usuario:password:nivel
@@ -92,7 +99,7 @@ function checkUsuarioLine {
 function checkFile {
 
 	respuesta="$(./checkeoGeneralDeArchivo.ksh "$nombreArchivo")"
-	if (( $? != 0)); then
+	if (($? != 0)); then
 		print "$respuesta"
 		exit 1
 	fi
@@ -191,7 +198,8 @@ while getopts a:g:tu:r:cn: o; do
 		print "update"
 		;;
 	r)
-		print "remove"
+		rFlag=true
+		rFlagArg="$OPTARG"
 		;;
 	c)
 
@@ -224,4 +232,7 @@ if [[ $tFlag ]]; then
 fi
 if [[ $nFlag ]]; then
 	checkProductoLine "$nFlagArg"
+fi
+if [[ $rFlag ]]; then
+	remover "$rFlagArg"
 fi

@@ -14,7 +14,7 @@ readonly nombreArchivo="Clientes.txt"
 
 function agregar {
 	cliente="$1"
-
+	
 	# Se verifican que sea de tipo nombre:celular:dirección
 	if [[ ! "$cliente" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
 		print "El producto debe ser del tipo nombre:celular:dirección \n"
