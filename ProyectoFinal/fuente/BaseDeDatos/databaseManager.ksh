@@ -23,8 +23,6 @@ function cleanup {
 trap 'cleanup' EXIT
 trap 'cleanup' INT HUP QUIT TERM ALRM USR1
 
-
-
 function addElement {
     addQuery="$1"
     if [[ ! "$addQuery" =~ ^[^:]+:.*$ ]]; then
@@ -294,6 +292,7 @@ function llenadoInicialTesteo {
     usuarios+="emanuel:123:2\n"
     usuarios+="jorge:256:2\n"
     usuarios+="roberto:789:2\n"
+    usuarios+="maria:jose:1\n"
 
     print $usuarios | while read line; do
         if [ -z "$line" ]; then

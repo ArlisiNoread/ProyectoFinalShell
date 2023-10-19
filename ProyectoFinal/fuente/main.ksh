@@ -12,7 +12,7 @@ function cleanup {
     #Se realizan procesos de salida.
     clear
     codigoSalida="$?"
-    log "Proceso finalizado $codigoSalida"
+    log "Proceso finalizado $codigoSalida."
     exit "$codigoSalida"
 }
 
