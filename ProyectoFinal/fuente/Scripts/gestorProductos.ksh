@@ -62,8 +62,9 @@ while true; do
 		   ;;
 	  	3)
 		   ;;
-	   	4)	clear
-			source ./punto_de_venta.ksh	
+	   	4)	#clear
+			#source ./punto_de_venta.ksh	
+			break
 		   ;;
 	   	*)
 		   	echo "Opción no válida. Intente de nuevo."
