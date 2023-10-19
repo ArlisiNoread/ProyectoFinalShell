@@ -15,6 +15,13 @@ if [ "$0" =~ ^*gestorClientes.ksh$ ]; then
     autoload bd
 fi
 
+function newUsuario {
+	typeset nombre="$1"
+	typeset password="$2"
+	typeset -i nivel="$3"
+	(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -a usuarios:"$nombre":"$password":"$nivel")
+}
+
 function getUsuario {
 	typeset nombre="$1"
 	consulta="$(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -g usuarios:"$nombre")"
@@ -26,18 +33,20 @@ function getAllUsuario {
   	echo "$consulta"
 }
 
+
 while true; do
+	clear
 	printf "\n\n\t\t===================  MU & ME ====================\n"
 	printf "\n\t\t                 Gestor de Usuarios  		 \n"
 	printf "\n\n\t\t=================================================\n"
 	printf "\n\n\n"
-
 
 	printf "\t 1. Dar de alta un usuario \n"
 	printf "\t 2. Consultar informacion de un usuario \n"
 	printf "\t 3. Visualizar los usuarios \n"
 	printf "\t 4. Volver al menu principal \n"
 	printf "\t ======================\n"
+
 
 	printf "\t\n"
    	print -n "Seleccione una opción:"
@@ -46,22 +55,25 @@ while true; do
 	case $opcion in
 		1)
 			while ((op != 1 )); do
-				print -n "Nombre del usuario: "
+				clear
+				printf "\n\n\t\t===================  MU & ME ====================\n"
+				printf "\n\t\t             < Dar de alta un usuario >  	 	 \n"
+				printf "\n\n\t\t=================================================\n"
+				printf "\n\n\n"
+
+				print -n "\t >> Nombre del usuario: "
 				read nombre_usuario
-				print -n "Contraseña: "
+				print -n "\t >> Contraseña: "
 				read password_usuario
-				print -n "Nivel de usuario: "
+				print -n "\t >> Nivel de usuario: "
 				read nivel_usuario			
-				(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -a usuarios:"$nombre_usuario":"$password_usuario":"$nivel_usuario")
-				print "$?"
-				
+				newUsuario "$nombre_usuario" "$password_usuario" "$nivel_usuario"		
 				printf "\t ======================\n"
 				printf "\t Presione 1 para salir \n"
 				printf "\t Presione 0 para seguir agregando\n"
 				print -n "Digite una opcion: "
 				read op
 			done
-			clear
 			op=0
 		   ;;
 	  	2)
@@ -109,11 +121,10 @@ while true; do
 				print -n "Digite una opcion: "
 				read op
 			done
+			op=0
 		   ;;
 	  	3)	
-
 			while ((op != 1 )); do
-
 				consultaUsuario="$(getAllUsuario)"
 
 
@@ -155,6 +166,7 @@ while true; do
 				print -n "Digite una opcion: "
 				read op
 			done
+			op=0
 			;;
 	   	4)	clear
 			source ./menu.ksh
