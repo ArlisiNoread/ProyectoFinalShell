@@ -135,22 +135,34 @@ function obtenerTodosElementos {
     esac
 }
 
-function obtenerTodosElementos {
-    case "$1" in
+function update {
+    query="$1"
+    if [[ ! "$query" =~ ^[^:]+:[^:]+ ]]; then
+        print "Formato de query basedatos:[datos-sustitución]"
+        exit 1
+    fi
+
+    basedatos="$(echo "$query" | awk -F: '{print $1}')"
+    objeto="$(echo "$query" | awk -F: '
+        {
+            i=2
+            limit=NF
+            while(i < limit){
+                printf "%s:", $i
+                i++
+            }
+            printf "%s\n", $i
+        }')"
+
+    case "$basedatos" in
     usuarios)
-        print "$(./crudUsuarios.ksh -t)"
+        print "$(./crudUsuarios.ksh -u "$objeto")"
         ;;
     productos)
-        print "$(./crudProductos.ksh -t)"
+        print "$(./crudProductos.ksh -u "$objeto")"
         ;;
     clientes)
-        print "$(./crudClientes.ksh -t)"
-        ;;
-    ventas)
-        print "$(./crudVentas.ksh -t)"
-        ;;
-    ventasproductos)
-        print "$(./crudVentasProductos.ksh -t)"
+        print "$(./crudClientes.ksh -u "$objeto")"
         ;;
     *)
         print "Opción de base datos inválida."
@@ -269,6 +281,8 @@ while getopts a:g:t:l:cu:r: o; do
         ;;
     u)
         # update
+        uFlag=true
+        uFlagArg="$OPTARG"
         ;;
     r)
         # remover - remove
@@ -310,7 +324,7 @@ if [[ $cFlag ]]; then
 fi
 
 if [[ $uFlag ]]; then
-    checarSaludGeneral
+    update "$uFlagArg"
 fi
 
 if [[ $rFlag ]]; then

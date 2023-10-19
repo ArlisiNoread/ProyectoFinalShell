@@ -14,7 +14,7 @@ readonly nombreArchivo="Clientes.txt"
 
 function agregar {
 	cliente="$1"
-	
+
 	# Se verifican que sea de tipo nombre:celular:dirección
 	if [[ ! "$cliente" =~ ^[^:]+:[^:]+:[^:]+$ ]]; then
 		print "El producto debe ser del tipo nombre:celular:dirección \n"
@@ -66,27 +66,31 @@ function remover {
 
 function update {
 	cliente="$1"
-	
-	# Se verifican que sea de tipo nombre:celular:dirección
+
+	# Se verifican que sea de tipo id:nombre:celular:dirección
 	if [[ ! "$cliente" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
-		print "El producto debe ser del tipo id:nombre:celular:dirección \n"
+		print "El cliente debe ser del tipo id:nombre:celular:dirección \n"
 		exit 1
 	fi
 
 	respuestaAnalisis=$(checkClienteLine "$cliente")
-
 	if (($? != 0)); then
 		print "$respuestaAnalisis"
 		exit 1
 	fi
 
-	idcliente="$(print cliente | awk -F: '{print $1}')"
+	idcliente="$(print "$cliente" | awk -F: '{print $1}')"
+	nuevaTabla="$(cat "$nombreArchivo" | awk -F: -v id="$idcliente" -v newval="$cliente" '
+		{
+		if(id == $1)
+			print newval
+		else
+			print $0
+		}
+	')"
+	print "$nuevaTabla" >"$nombreArchivo"
 
-	sed "s/^$idcliente:[^:]+:[^:]+:[^:]+$/$cliente/"
-
-	print "$idCliente"
 }
-
 
 function checkClienteLine {
 	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
@@ -188,7 +192,8 @@ while getopts a:g:tu:r:cn: o; do
 		tFlag=true
 		;;
 	u)
-		print "update"
+		uFlag=true
+		uFlagArg="$OPTARG"
 		;;
 	r)
 		rFlag=true
@@ -220,6 +225,9 @@ if [[ $gFlag ]]; then
 fi
 if [[ $tFlag ]]; then
 	getAllElements
+fi
+if [[ $uFlag ]]; then
+	update "$uFlagArg"
 fi
 if [[ $rFlag ]]; then
 	remover "$rFlagArg"

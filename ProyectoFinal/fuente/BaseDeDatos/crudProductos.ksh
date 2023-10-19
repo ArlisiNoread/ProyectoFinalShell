@@ -64,6 +64,33 @@ function remover {
 	sed -i "/^$idProducto/d" "$nombreArchivo"
 }
 
+function update {
+	producto="$1"
+
+	# Se verifican que sea de tipo id:nombre:costo:cantidadEnAlmacen
+	if [[ ! "$producto" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+		print "El producto debe ser del tipo id:nombre:costo:cantidadEnAlmacen"
+		exit 1
+	fi
+
+	respuestaAnalisis=$(checkProductoLine "$producto")
+	if (($? != 0)); then
+		print "$respuestaAnalisis"
+		exit 1
+	fi
+
+	idProducto="$(print "$producto" | awk -F: '{print $1}')"
+	nuevaTabla="$(cat "$nombreArchivo" | awk -F: -v id="$idProducto" -v newval="$producto" '
+		{
+		if(id == $1)
+			print newval
+		else
+			print $0
+		}
+	')" 
+	print "$nuevaTabla" >"$nombreArchivo"
+}
+
 function checkProductoLine {
 	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
 		#Formato id:nombre:costo:cantidadEnAlmacen
@@ -171,7 +198,8 @@ while getopts a:g:tu:r:cn: o; do
 		tFlag=true
 		;;
 	u)
-		print "update"
+		uFlag=true
+		uFlagArg="$OPTARG"
 		;;
 	r)
 		rFlag=true
@@ -203,6 +231,9 @@ if [[ $gFlag ]]; then
 fi
 if [[ $tFlag ]]; then
 	getAllElements
+fi
+if [[ $uFlag ]]; then
+	update "$uFlagArg"
 fi
 if [[ $rFlag ]]; then
 	remover "$rFlagArg"
