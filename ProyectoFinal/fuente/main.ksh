@@ -12,7 +12,7 @@ function cleanup {
 trap 'cleanup' EXIT
 trap 'cleanup' INT HUP QUIT TERM ALRM USR1
 
-# Importanción de librerías
+# Importación de librerías
 export FPATH="$(pwd)/../lib"
 autoload easyTput
 autoload bd
