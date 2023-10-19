@@ -1,5 +1,12 @@
 #!/bin/ksh
 
+if [ "$0" =~ ^*login.ksh$ ]; then
+    libreriaDesdeScript=true
+    export FPATH="$(pwd)/../../lib"
+    autoload easyTput
+    autoload bd
+fi
+
 # Realizamos login
 
 cntIntentos=0

@@ -2,13 +2,14 @@
 
 #Uso este script para probar libs
 
-print $0
-#if [ -z "$main" ]; then
 if [ "$0" =~ ^*test.ksh$ ]; then
-    print "Check"
+    libreriaDesdeScript=true
     export FPATH="$(pwd)/../../lib"
     autoload easyTput
+    autoload bd
 fi
+
+bd -t clientes
 
 print "Esta es una prueba."
 

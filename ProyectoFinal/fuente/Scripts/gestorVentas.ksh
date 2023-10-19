@@ -6,6 +6,15 @@
 #	Script encargado de realizar operaciones que tienen que ver con altas, bajas, actualizaciones 
 #	de la tabla "Productos" de la base de datos.
 
+
+if [ "$0" =~ ^*gestorVentas.ksh$ ]; then
+    libreriaDesdeScript=true
+    export FPATH="$(pwd)/../../lib"
+    autoload easyTput
+    autoload bd
+fi
+
+
 # Menu principal 
 
 while true; do

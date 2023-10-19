@@ -1,12 +1,17 @@
 #!/bin/ksh
 
 function bd {
+    if [ ! -z "$libreriaDesdeScript" ]; then
+        ruta="./../BaseDeDatos"
+    else
+        ruta="./BaseDeDatos"
+    fi
+    unset libreriaDesdeScript
     respuesta="$(
-        cd ./BaseDeDatos
+        cd "$ruta"
         ./databaseManager.ksh $*
     )"
     if(( "$?" != 0 ));then
-
         print "$respuesta" 
         exit 1
     fi
