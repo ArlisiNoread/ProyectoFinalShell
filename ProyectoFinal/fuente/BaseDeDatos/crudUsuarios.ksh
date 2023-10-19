@@ -65,12 +65,37 @@ function getAllElements {
 	print "$(cat "$nombreArchivo")"
 }
 
+function update {
+        usuario="$1"
+        # Se verifican que sea de tipo username:password:nivel
+		reg="^[^:]+:[^:]+:\d+$"
+        if [[ ! "$usuario" =~ $reg ]]; then
+                print "Los datos de usuario deben ser del tipo username:password:nivel \n"
+                exit 1
+        fi
+
+        nombreusuario="$(print "$usuario" | awk -F: '{print $1}')"
+        nuevaTabla="$(cat "$nombreArchivo" | awk -F: -v nombreusuario="$nombreusuario" -v newval="$usuario" '
+                {
+                if(nombreusuario == $2)
+                        printf "%d:%s\n", $1, newval
+                else
+                        print $0
+                }
+        ')"
+        print "$nuevaTabla" >"$nombreArchivo"
+
+}
+
+
 function remover {
 
 	usuario="$1"
 	print "Usuario:$usuario"
 	sed -i "/^[^:]:$usuario:/d" "$nombreArchivo"
 }
+
+
 
 function checkUsuarioLine {
 	reg="^[^:]+:[^:]+:[^:]+:[^:]+$"
@@ -199,7 +224,8 @@ while getopts a:g:tu:r:cn: o; do
 		tFlag=true
 		;;
 	u)
-		print "update"
+		uFlag=true
+		uFlagArg="$OPTARG"		
 		;;
 	r)
 		rFlag=true
@@ -239,4 +265,7 @@ if [[ $nFlag ]]; then
 fi
 if [[ $rFlag ]]; then
 	remover "$rFlagArg"
+fi
+if [[ $uFlag ]]; then
+	update "$uFlagArg"
 fi
