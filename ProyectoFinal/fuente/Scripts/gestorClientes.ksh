@@ -8,6 +8,12 @@
 
 # Menu principal 
 
+if [ "$0" =~ ^*gestorClientes.ksh$ ]; then
+    libreriaDesdeScript=true
+    export FPATH="$(pwd)/../../lib"
+    autoload easyTput
+    autoload bd
+fi
 
 function newUsuario {
 	typeset nombre="$1"

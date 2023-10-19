@@ -1,19 +1,13 @@
 #!/bin/ksh
+
 clear
-#(cd ./BaseDeDatos/ ; ./databaseManager.ksh -t usuarios)
-#print "$(./databaseManager.ksh -t 'usuarios')"
 
-################################################
-#     Nomas ando probando las librerías        #
-################################################
-
-
-################################################
-# A no ma si funciona                          #
-# Reglas para las librerías:                   #
-# El archivo debe llamarse igual a la función. #
-# No se porqué, si no no lo detecta            #
-################################################
+if [ "$0" =~ ^*menu.ksh$ ]; then
+    libreriaDesdeScript=true
+    export FPATH="$(pwd)/../../lib"
+    autoload easyTput
+    autoload bd
+fi
 
 # Función para mostrar las opciones del menu principal
 mostrarMenu() {

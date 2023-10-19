@@ -7,6 +7,14 @@
 #	en la base de datos del sistema, asi como de brindar un acceso simplificado a la informacion
 #	que se presenta.
 
+if [ "$0" =~ ^*punto_de_venta.ksh$ ]; then
+    libreriaDesdeScript=true
+    export FPATH="$(pwd)/../../lib"
+    autoload easyTput
+    autoload bd
+fi
+
+
 # Inicializar variables
 total=0
 productos=""

@@ -64,6 +64,35 @@ function remover {
 	sed -i "/^$idCliente/d" "$nombreArchivo"
 }
 
+function update {
+	cliente="$1"
+	
+	# Se verifican que sea de tipo nombre:celular:dirección
+	if [[ ! "$cliente" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
+		print "El producto debe ser del tipo id:nombre:celular:dirección \n"
+		exit 1
+	fi
+
+	respuestaAnalisis=$(checkClienteLine "$cliente")
+
+	if (($? != 0)); then
+		print "$respuestaAnalisis"
+		exit 1
+	fi
+
+	if [[ ! -s "$nombreArchivo" ]]; then
+		idMayor=1
+		printf "1:%s\n" "$cliente" >>"$nombreArchivo"
+	else
+		idMayor="$(sed '/^$/d' "$nombreArchivo" | tail -n 1 | awk -F: '{print $1}')"
+		((idMayor++))
+		printf "\n%d:%s\n" "$idMayor" "$cliente" >>"$nombreArchivo"
+		sed -i '/^$/d' "$nombreArchivo"
+	fi
+	print "$idMayor"
+}
+
+
 function checkClienteLine {
 	if [[ "$1" =~ ^[^:]+:[^:]+:[^:]+:[^:]+$ ]]; then
 		#Formato id:nombre:celular:direccion

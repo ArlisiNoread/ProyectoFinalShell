@@ -8,6 +8,13 @@
 
 # Menu principal 
 
+if [ "$0" =~ ^*gestorProductos.ksh$ ]; then
+    libreriaDesdeScript=true
+    export FPATH="$(pwd)/../../lib"
+    autoload easyTput
+    autoload bd
+fi
+
 while true; do
 	printf "\n\n\t\t===================  MU & ME ====================\n"
 	printf "\n\t\t                 Gestor de productos  		 \n"

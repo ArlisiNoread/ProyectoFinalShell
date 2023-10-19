@@ -6,8 +6,14 @@
 #       Script encargado de realizar operaciones que tiene que ver con altas, bajas, actualizaciones
 #       de la tabla de "Usuarios" de la base de datos.
 #
-#export FPATH="$(pwd)/../../lib"
-#autoload easyTput
+
+if [ "$0" =~ ^*gestorUsuarios.ksh$ ]; then
+    libreriaDesdeScript=true
+    export FPATH="$(pwd)/../../lib"
+    autoload easyTput
+    autoload bd
+fi
+
 
 # Menu principal
 
