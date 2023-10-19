@@ -27,15 +27,16 @@ function addElement {
     case "$database" in
     usuarios)
         respuesta="$(./crudUsuarios.ksh -a "$objeto")"
-        print "$respuesta"
         if (($? != 0)); then
+            print "$respuesta"
             exit 1
         fi
+
         ;;
     productos)
         respuesta="$(./crudProductos.ksh -a "$objeto")"
-        print "$respuesta"
         if (($? != 0)); then
+            print "$respuesta"
             exit 1
         fi
         ;;
@@ -43,8 +44,8 @@ function addElement {
         print "Test"
 
         respuesta="$(./crudClientes.ksh -a "$objeto")"
-        print "$respuesta"
         if (($? != 0)); then
+            print "$respuesta"
             exit 1
         fi
         ;;
@@ -55,26 +56,25 @@ function addElement {
             exit 1
         fi
         respuesta="$(./crudVentas.ksh -a "$objeto:$(date +"%d-%m-%y/%H-%M-%S")")"
-        print "$respuesta"
         if (($? != 0)); then
+            print "$respuesta"
             exit 1
         fi
         ;;
     ventasproductos)
         respuesta="$(./crudVentasProductos.ksh -a "$objeto")"
-        print "$respuesta"
         if (($? != 0)); then
+            print "$respuesta"
             exit 1
         fi
-        ;;
-    insumos)
-        print "To do"
         ;;
     *)
         print "Opción de base datos inválida."
         exit 1
         ;;
     esac
+    print "$respuesta"
+
 }
 
 function obtenerElemento {
