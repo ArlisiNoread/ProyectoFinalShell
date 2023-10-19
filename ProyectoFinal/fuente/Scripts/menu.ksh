@@ -72,8 +72,7 @@ while true; do
 			source ./Scripts/gestorClientes.ksh
 			;;
 		3)
-			clear
-			exit
+			break
 			;;
 		*)
 			tput setaf 1

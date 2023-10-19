@@ -1,10 +1,10 @@
 #!/bin/ksh
 
-# Nombre de script: gestorProductos.ksh
+# Nombre de script: gestorVentas.ksh
 # Descripcion:
 # 	
 #	Script encargado de realizar operaciones que tienen que ver con altas, bajas, actualizaciones 
-#	de la tabla "Productos" de la base de datos.
+#	de la tabla "Ventas" de la base de datos.
 
 
 if [ "$0" =~ ^*gestorVentas.ksh$ ]; then
@@ -19,58 +19,85 @@ fi
 # Menu principal 
 
 while true; do
-	printf "\n\n\t\t===================  MU & ME ====================\n"
-	printf "\n\t\t                 Gestor de Ventas  		 \n"
-	printf "\n\n\t\t=================================================\n"
-	printf "\n\n\n"
+    easyTput colortexto verde
+    printf "\n\n\t===================  MU & ME ====================\n"
+    easyTput reset
+    printf "\n\t                 Gestor de ventas  		 \n"
+    easyTput colortexto verde
+    printf "\n\n\t=================================================\n"
+    easyTput reset
+    printf "\n\n\n"
 
 
-	printf "\t 1. Registrar venta \n"
-	printf "\t 2. Consultar informacion de la venta \n"
-	printf "\t 3. Visualizar las ventas \n"
-	printf "\t 4. Volver al menu principal \n"
+	printf "\t 1. Agregar una venta \n"
+	printf "\t 2. Consultar informacion de una venta \n"
+	printf "\t 3. Visualizar todas las  ventas \n"
+	printf "\t 4. Borrar una venta \n"
+	printf "\t 5. Volver al menu principal \n"
 	printf "\t ======================\n"
-	printf "\t Total: \$$total \n"
-	printf "\t Productos: $productos \n"
-	printf "\t ====================== \n"
-
 	printf "\t\n"
    	print -n "Seleccione una opción:"
    	read opcion
 
 	case $opcion in
 		1)
-			while ((op != 1 )); do
-				print -n "Nombre del cliente: "
-				read nombre_producto
-				print -n "Precio: "
-				read precio_producto
-				print -n "Cantidad: "
-				read cantidad_producto			
-				(cd .. ; cd ./BaseDeDatos/ ; ksh ./databaseManager.ksh -a usuarios:"$nombre_producto":"$precio_producto":"$cantidad_producto")
-				print "$respuesta"
-				print "Presione 1 para salir "
-				print "Presione 0 para seguir agregando"
-				print -n "Digite una opcion: "
-				read op
-			done
-			clear
-			op=0
-		   ;;
+                # punto de venta y agrenado ventas a clientes
+				print -n "\t Digite el ID del cliente que se le  agregara la venta: "
+				read id
+				print -n "\t Nombre producto: "
+				read nombre
+				print -n "\t Cantidad: "
+				read cantidad
+				print -n "\t Precio: "
+				read precio
+				respuesta="$(bd -a ventas:"$id")"
+				easyTput colortexto rojo
+                print "\n\t Numero de venta: $respuesta"
+                easyTput reset
+
+        ;;
+
 	  	2)
-		#	while ((op != 1 )); do
-				
-		#	done
+            easyTput colortexto verde
+			print -n "\t Ingresa el ID de la venta a buscar: "
+			read venta
+			easyTput reset
+			easyTput colortexto rojo
+			venta="$(bd -g "ventas:$venta")"
+            print "\t $venta:" |  sed 's/:/\t/g'
+			easyTput reset
+		;;
+
+		3)
+            easyTput colortexto verde
+			print -n "\t Todas las ventas\n"
+			easyTput reset
+			easyTput colortexto rojo
+			venta="$(bd -t "ventas")"
+			print "$venta" | sed -e 's/:/\t/g' -e '1,$s/^/\t/g'
+			easyTput reset
+		;;
+
+	
+	   	4)	
+            easyTput colortexto verde
+			print -n "\t Ingresa el id de la venta a borrar: "
+			easyTput reset
+			read rventa
+			print "\t $(bd -r "ventas:$rventa")"
+            easyTput colortexto rojo
+            print "\t Usuario borrado"
+            easyTput reset
 		   ;;
-	  	3)
-		   ;;
-	   	4)	clear
-			source ./punto_de_venta.ksh	
-			op=0
-		   ;;
+		5)
+            break
+            ;;
 	   	*)
-		   	echo "Opción no válida. Intente de nuevo."
-		   	read -p "Presione Enter para continuar..."
+		   	
+		   	easyTput colortexto rojo
+		    print "\t Ingresa una opción valida\n"
+		    easyTput reset
+		   	
 		   ;;
 	esac
 done
