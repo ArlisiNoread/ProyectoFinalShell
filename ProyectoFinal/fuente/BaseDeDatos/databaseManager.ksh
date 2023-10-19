@@ -142,7 +142,15 @@ function checarUsuarioPassword {
     fi
 }
 
-while getopts a:g:t:c:u:r: o; do
+function checarSaludGeneral {
+    ./crudClientes.ksh -c
+    ./crudProductos.ksh -c
+    ./crudUsuarios.ksh -c
+    ./crudVentas.ksh -c
+    ./crudVentasProductos.ksh -c
+}
+
+while getopts a:g:t:l:cu:r: o; do
     case "$o" in
     a)
         # Agregar - add
@@ -160,16 +168,20 @@ while getopts a:g:t:c:u:r: o; do
         tFlag=true
         tFlagArg="$OPTARG"
         ;;
+    c)
+        # Checar salud de todos los archivos
+        cFlag=true
+        ;;
     u)
         # update 
         ;;
     r)
         # remover - remove
         ;;
-    c)
+    l)
         # Checar usuario PassWord
-        cFlag=true
-        cFlagArg="$OPTARG"
+        lFlag=true
+        lFlagArg="$OPTARG"
         #usuario:contraseñas
         #regresa usuario:nivel
         ;;
@@ -181,8 +193,9 @@ while getopts a:g:t:c:u:r: o; do
 done
 shift $OPTIND-1
 
-if [[ $cFlag ]]; then
-    checarUsuarioPassword "$cFlagArg"
+if [[ $lFlag ]]; then
+    # login
+    checarUsuarioPassword "$lFlagArg"
 fi
 if [[ $aFlag ]]; then
     addElement "$aFlagArg"
@@ -193,3 +206,8 @@ fi
 if [[ $tFlag ]]; then
     obtenerTodosElementos "$tFlagArg"
 fi
+
+if [[ $cFlag ]]; then
+    checarSaludGeneral
+fi
+
