@@ -5,7 +5,20 @@
 cntIntentos=0
 checkUser=""
 
+clear
+
 while ((cntIntentos < 3)); do
+    printf "Sistema Login" #presentación
+
+    if [ ! -z "$loginFallido" ]; then
+        easyTput colortexto rojo
+        printf "\tCredenciales inválidas"
+        easyTput reset
+    fi
+
+    print ""
+    print ""
+
     printf "Usuario: "
     read usuario
     old=$(stty -g)
@@ -14,18 +27,18 @@ while ((cntIntentos < 3)); do
     read contrasena #La pass está escondida
     print ""
     stty "$old" # Lo regresamos a como estaba.
-    print "$usuario-$contrasena"
     if [[ ! -z "$usuario" && ! -z "$contrasena" ]]; then
-        print "entramos"
-        checkUser="$(bd -c "$usuario:$contrasena")"
+        #Realizamos login
+        checkUser="$(bd -l "$usuario:$contrasena")"
     fi
-    print "$checkUser"
     if [ ! -z "$checkUser" ]; then
-        print "############# $chekUser"
         usuario="$checkUser"
         break
+    else
+        loginFallido=true
     fi
     ((cntIntentos++))
+    clear
     unset usuario
     unset contrasena
 done

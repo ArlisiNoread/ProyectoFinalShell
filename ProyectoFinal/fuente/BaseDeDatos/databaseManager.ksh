@@ -142,7 +142,7 @@ function checarUsuarioPassword {
     fi
 }
 
-while getopts a:g:t:c:u:r: o; do
+while getopts a:g:t:l:c:u:r: o; do
     case "$o" in
     a)
         # Agregar - add
@@ -166,10 +166,10 @@ while getopts a:g:t:c:u:r: o; do
     r)
         # remover - remove
         ;;
-    c)
+    l)
         # Checar usuario PassWord
-        cFlag=true
-        cFlagArg="$OPTARG"
+        lFlag=true
+        lFlagArg="$OPTARG"
         #usuario:contraseñas
         #regresa usuario:nivel
         ;;
@@ -181,8 +181,9 @@ while getopts a:g:t:c:u:r: o; do
 done
 shift $OPTIND-1
 
-if [[ $cFlag ]]; then
-    checarUsuarioPassword "$cFlagArg"
+if [[ $lFlag ]]; then
+    # login
+    checarUsuarioPassword "$lFlagArg"
 fi
 if [[ $aFlag ]]; then
     addElement "$aFlagArg"
